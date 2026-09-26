@@ -7,7 +7,7 @@ tags: ["Audio Processing", "Deep Learning", "PyTorch", "Bioacoustics", "Kaggle",
 ---
 
 <div class="action-links">
-  <a class="action-btn btn-code" href="https://github.com/LuzuJ" target="_blank" rel="noopener">View Repositories (GitHub)</a>
+  <a class="action-btn btn-code" href="https://github.com/LuzuJ/BirdCLEF_Repo" target="_blank" rel="noopener">BirdCLEF Repository (GitHub)</a>
 </div>
 
 ## 1. Domain Constraints & Signal Challenges

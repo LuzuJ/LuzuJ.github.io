@@ -7,7 +7,7 @@ tags: ["Audio Processing", "Deep Learning", "PyTorch", "Bioacoustics", "Kaggle",
 ---
 
 <div class="action-links">
-  <a class="action-btn btn-code" href="https://github.com/LuzuJ" target="_blank" rel="noopener">Ver Repositorios Kaggle (GitHub)</a>
+  <a class="action-btn btn-code" href="https://github.com/LuzuJ/BirdCLEF_Repo" target="_blank" rel="noopener">Repositorio BirdCLEF (GitHub)</a>
 </div>
 
 ## 1. Desafío Físico y Restricciones del Dominio
