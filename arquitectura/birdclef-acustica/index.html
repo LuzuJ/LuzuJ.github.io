@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="es" dir="auto" data-theme="dark">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Pipeline Multietiqueta de Bioacústica (BirdCLEF 2026) | Jonathan Luzuriaga | Systems &amp; Applied AI</title>
+<meta name="keywords" content="Audio Processing, Deep Learning, PyTorch, Bioacoustics, Kaggle, Edge AI">
+<meta name="description" content="Arquitectura de procesamiento de audio continuo y clasificación multietiqueta para detección de eventos sonoros en entornos de alta interferencia acústica.">
+<meta name="author" content="Jonathan Luzuriaga">
+<link rel="canonical" href="http://localhost:1313/arquitectura/birdclef-acustica/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.eef372f5c345e0e577dd4953b39230b064a9a45edeee73e89a21ffa0b59c5d18.css" integrity="sha256-7vNy9cNF4OV33UlTs5IwsGSppF7e7nPomiH/oLWcXRg=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="es" href="http://localhost:1313/arquitectura/birdclef-acustica/">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/en/arquitectura/birdclef-acustica/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+</noscript>
+<script>
+    if (localStorage.getItem("pref-theme") === "light") {
+        document.querySelector("html").dataset.theme = 'light';
+    }
+
+</script><meta property="og:url" content="http://localhost:1313/arquitectura/birdclef-acustica/">
+  <meta property="og:site_name" content="Jonathan Luzuriaga | Systems & Applied AI">
+  <meta property="og:title" content="Pipeline Multietiqueta de Bioacústica (BirdCLEF 2026)">
+  <meta property="og:description" content="Arquitectura de procesamiento de audio continuo y clasificación multietiqueta para detección de eventos sonoros en entornos de alta interferencia acústica.">
+  <meta property="og:locale" content="es">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="arquitectura">
+    <meta property="article:published_time" content="2026-09-25T00:00:00+00:00">
+    <meta property="article:modified_time" content="2026-09-25T00:00:00+00:00">
+    <meta property="article:tag" content="Audio Processing">
+    <meta property="article:tag" content="Deep Learning">
+    <meta property="article:tag" content="PyTorch">
+    <meta property="article:tag" content="Bioacoustics">
+    <meta property="article:tag" content="Kaggle">
+    <meta property="article:tag" content="Edge AI">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Pipeline Multietiqueta de Bioacústica (BirdCLEF 2026)">
+  <meta name="twitter:description" content="Arquitectura de procesamiento de audio continuo y clasificación multietiqueta para detección de eventos sonoros en entornos de alta interferencia acústica.">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Arquitectura de Sistemas \u0026 Modelado Empírico",
+      "item": "http://localhost:1313/arquitectura/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Pipeline Multietiqueta de Bioacústica (BirdCLEF 2026)",
+      "item": "http://localhost:1313/arquitectura/birdclef-acustica/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Pipeline Multietiqueta de Bioacústica (BirdCLEF 2026)",
+  "name": "Pipeline Multietiqueta de Bioacústica (BirdCLEF 2026)",
+  "description": "Arquitectura de procesamiento de audio continuo y clasificación multietiqueta para detección de eventos sonoros en entornos de alta interferencia acústica.",
+  "keywords": [
+    "Audio Processing", "Deep Learning", "PyTorch", "Bioacoustics", "Kaggle", "Edge AI"
+  ],
+  "articleBody": " Ver Repositorios Kaggle (GitHub) 1. Desafío Físico y Restricciones del Dominio La identificación automatizada de especies de aves a partir de grabaciones de audio en campo continuo presenta desafíos singulares de procesamiento de señales:\nRelación Señal/Ruido (SNR) desbalanceada: Las vocalizaciones de interés suelen estar ocultas bajo lluvia torrencial, viento contra los micrófonos de campo, insectos estridentes y corrientes fluviales. Solapamiento Polifónico: Múltiples especies emiten vocalizaciones concurrentes en la misma banda de frecuencia, exigiendo una clasificación multietiqueta estricta (no multiclase mutuamente excluyente). Restricción de Latencia e Inferencia Continua: El modelo debe procesar horas ininterrumpidas de audio sin degradar el throughput computacional. 2. Pipeline de Procesamiento de Señales de Extremo a Extremo flowchart LR Audio[\"Audio Crudo 32 kHz\"] --\u003e Slicer[\"Segmentación en Ventanas de 5s\"] Slicer --\u003e Filter[\"Filtrado Pasa-Banda: 0.5 - 14 kHz\"] Filter --\u003e STFT[\"Transformada STFT y Banco Mel en GPU\"] STFT --\u003e Aug[\"Aumento Espectral: SpecAugment y Mixup\"] Aug --\u003e Backbone[\"Backbone Convolucional (Extracción de Patrones)\"] Backbone --\u003e MultiLabel[\"Cabezal Multietiqueta (Sigmoide + Umbral)\"] MultiLabel --\u003e Out[\"Vector de Probabilidades por Especie\"] 2.1. Ingesta y Espectrogramas Mel El audio crudo en formato WAV/OGG se remuestrea a una frecuencia fija de 32,000 Hz. Se generan segmentos de longitud temporal fija de 5.0 segundos (160,000 muestras). Se aplica una Transformada Rápida de Fourier de Tiempo Reducido (STFT) con ventana Hanning de 1024 puntos y salto de 512 puntos, proyectando las energías hacia una escala Mel con 128 bancos de filtros normalizados en rango decibélico (dB). 2.2. Aumento de Datos Espectral Para robustecer la red frente a variaciones de grabación y solapamiento:\nSpecAugment: Enmascaramiento estocástico de bloques temporales y bandas frecuenciales continuas, forzando a la red a no depender de armónicos aislados. Mixup Acústico: Combinación lineal en el dominio de la forma de onda de dos audios distintos con ponderaciones extraídas de una distribución Beta: $$\\tilde{x} = \\lambda x_i + (1 - \\lambda) x_j, \\quad \\tilde{y} = \\lambda y_i + (1 - \\lambda) y_j$$ 3. Destilación y Despliegue en Borde (Edge) Para viabilizar la ejecución en nodos acústicos alimentados por energía solar o microcontroladores embebidos:\nEntrenamiento de Ensamble Maestro: Modelos de alta capacidad (EfficientNet-B3 y Audio Spectrogram Transformer) entrenados con función de pérdida focal binaria (Binary Focal Loss) para penalizar falsos positivos. Destilación de Conocimiento: Se entrena un modelo estudiante ultraligero (MobileNetV3 / ResNet-18) minimizando la divergencia Kullback-Leibler frente a las salidas suavizadas (soft labels) del ensamble. Cuantización a FP16/INT8: Reducción del tamaño de pesos a menos de 20 MB y ejecución a más de 45 cuadros por segundo en CPU estándar. ",
+  "wordCount" : "414",
+  "inLanguage": "es",
+  "datePublished": "2026-09-25T00:00:00Z",
+  "dateModified": "2026-09-25T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "Jonathan Luzuriaga"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "http://localhost:1313/arquitectura/birdclef-acustica/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Jonathan Luzuriaga | Systems \u0026 Applied AI",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "http://localhost:1313/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="header-nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="Jonathan Luzuriaga | Systems &amp; Applied AI (Alt + H)">Jonathan Luzuriaga | Systems &amp; Applied AI</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" class="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button><span class="nav-sep">|</span>
+                    <ul class="lang-menu">
+                        <li>
+                            <a href="http://localhost:1313/en/" title="EN"
+                                aria-label="EN">EN</a>
+                        </li>
+                    </ul>
+            </div>
+        </div>
+        <ul id="menu" class="menu">
+            <li>
+                <a href="http://localhost:1313/arquitectura/juez-seguro/" title="Sistemas Distribuidos">
+                    <span>Sistemas Distribuidos</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/arquitectura/" title="Investigación &amp; IA">
+                    <span>Investigación &amp; IA</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/arquitectura/manticore-orquestacion-n8n/" title="Orquestación &amp; CI/CD">
+                    <span>Orquestación &amp; CI/CD</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/credenciales/dse-eccouncil/" title="Credenciales Auditadas">
+                    <span>Credenciales Auditadas</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/docs/cv_jonathan_j_luzuriaga_es.pdf" title="CV (PDF)">
+                    <span>CV (PDF)</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <nav class="breadcrumbs" role="navigation" aria-label="Breadcrumb">
+            <a href="/">Inicio</a>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <a href="/arquitectura/">Arquitectura de Sistemas &amp; Modelado Empírico</a>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+        <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+</nav>
+    <h1 class="post-title entry-hint-parent">
+      Pipeline Multietiqueta de Bioacústica (BirdCLEF 2026)
+    </h1>
+    <div class="post-description">
+      Arquitectura de procesamiento de audio continuo y clasificación multietiqueta para detección de eventos sonoros en entornos de alta interferencia acústica.
+    </div>
+    <div class="post-meta">
+
+<span title='2026-09-25 00:00:00 +0000 UTC'>25 de septiembre de 2026</span>&nbsp;·&nbsp;<span>2 min</span>&nbsp;·&nbsp;<span>Jonathan Luzuriaga</span>&nbsp;|&nbsp;<span>Traducciones:</span>
+    <ul class="i18n_list">
+        <li>
+            <a href="http://localhost:1313/en/arquitectura/birdclef-acustica/">EN</a>
+        </li>
+    </ul>
+
+</div>
+  </header> <details class="toc" >
+    <summary accesskey="c" title="(Alt + C)">
+        <span class="title">Tabla de Contenidos</span>
+    </summary>
+
+    <div class="inner"><ul>
+            <li>
+                <a href="#1-desaf%c3%ado-f%c3%adsico-y-restricciones-del-dominio" aria-label="1. Desafío Físico y Restricciones del Dominio">1. Desafío Físico y Restricciones del Dominio</a></li>
+            <li>
+                <a href="#2-pipeline-de-procesamiento-de-se%c3%b1ales-de-extremo-a-extremo" aria-label="2. Pipeline de Procesamiento de Señales de Extremo a Extremo">2. Pipeline de Procesamiento de Señales de Extremo a Extremo</a><ul>
+                    
+            <li>
+                <a href="#21-ingesta-y-espectrogramas-mel" aria-label="2.1. Ingesta y Espectrogramas Mel">2.1. Ingesta y Espectrogramas Mel</a></li>
+            <li>
+                <a href="#22-aumento-de-datos-espectral" aria-label="2.2. Aumento de Datos Espectral">2.2. Aumento de Datos Espectral</a></li></ul>
+            </li>
+            <li>
+                <a href="#3-destilaci%c3%b3n-y-despliegue-en-borde-edge" aria-label="3. Destilación y Despliegue en Borde (Edge)">3. Destilación y Despliegue en Borde (Edge)</a>
+            </li>
+        </ul>
+    </div>
+</details>
+
+  <div class="post-content md-content"><div class="action-links">
+  <a class="action-btn btn-code" href="https://github.com/LuzuJ" target="_blank" rel="noopener">Ver Repositorios Kaggle (GitHub)</a>
+</div>
+<h2 id="1-desafío-físico-y-restricciones-del-dominio">1. Desafío Físico y Restricciones del Dominio<a hidden class="anchor" aria-hidden="true" href="#1-desafío-físico-y-restricciones-del-dominio">#</a></h2>
+<p>La identificación automatizada de especies de aves a partir de grabaciones de audio en campo continuo presenta desafíos singulares de procesamiento de señales:</p>
+<ul>
+<li><strong>Relación Señal/Ruido (SNR) desbalanceada:</strong> Las vocalizaciones de interés suelen estar ocultas bajo lluvia torrencial, viento contra los micrófonos de campo, insectos estridentes y corrientes fluviales.</li>
+<li><strong>Solapamiento Polifónico:</strong> Múltiples especies emiten vocalizaciones concurrentes en la misma banda de frecuencia, exigiendo una clasificación <strong>multietiqueta estricta</strong> (no multiclase mutuamente excluyente).</li>
+<li><strong>Restricción de Latencia e Inferencia Continua:</strong> El modelo debe procesar horas ininterrumpidas de audio sin degradar el throughput computacional.</li>
+</ul>
+<h2 id="2-pipeline-de-procesamiento-de-señales-de-extremo-a-extremo">2. Pipeline de Procesamiento de Señales de Extremo a Extremo<a hidden class="anchor" aria-hidden="true" href="#2-pipeline-de-procesamiento-de-señales-de-extremo-a-extremo">#</a></h2>
+<div class="mermaid">
+flowchart LR
+    Audio["Audio Crudo 32 kHz"] --> Slicer["Segmentación en Ventanas de 5s"]
+    Slicer --> Filter["Filtrado Pasa-Banda: 0.5 - 14 kHz"]
+    Filter --> STFT["Transformada STFT y Banco Mel en GPU"]
+    STFT --> Aug["Aumento Espectral: SpecAugment y Mixup"]
+    Aug --> Backbone["Backbone Convolucional (Extracción de Patrones)"]
+    Backbone --> MultiLabel["Cabezal Multietiqueta (Sigmoide + Umbral)"]
+    MultiLabel --> Out["Vector de Probabilidades por Especie"]
+</div>
+<h3 id="21-ingesta-y-espectrogramas-mel">2.1. Ingesta y Espectrogramas Mel<a hidden class="anchor" aria-hidden="true" href="#21-ingesta-y-espectrogramas-mel">#</a></h3>
+<ul>
+<li>El audio crudo en formato WAV/OGG se remuestrea a una frecuencia fija de <strong>32,000 Hz</strong>.</li>
+<li>Se generan segmentos de longitud temporal fija de <strong>5.0 segundos</strong> (160,000 muestras).</li>
+<li>Se aplica una Transformada Rápida de Fourier de Tiempo Reducido (STFT) con ventana Hanning de 1024 puntos y salto de 512 puntos, proyectando las energías hacia una escala Mel con 128 bancos de filtros normalizados en rango decibélico (dB).</li>
+</ul>
+<h3 id="22-aumento-de-datos-espectral">2.2. Aumento de Datos Espectral<a hidden class="anchor" aria-hidden="true" href="#22-aumento-de-datos-espectral">#</a></h3>
+<p>Para robustecer la red frente a variaciones de grabación y solapamiento:</p>
+<ul>
+<li><strong>SpecAugment:</strong> Enmascaramiento estocástico de bloques temporales y bandas frecuenciales continuas, forzando a la red a no depender de armónicos aislados.</li>
+<li><strong>Mixup Acústico:</strong> Combinación lineal en el dominio de la forma de onda de dos audios distintos con ponderaciones extraídas de una distribución Beta:
+$$\tilde{x} = \lambda x_i + (1 - \lambda) x_j, \quad \tilde{y} = \lambda y_i + (1 - \lambda) y_j$$</li>
+</ul>
+<h2 id="3-destilación-y-despliegue-en-borde-edge">3. Destilación y Despliegue en Borde (Edge)<a hidden class="anchor" aria-hidden="true" href="#3-destilación-y-despliegue-en-borde-edge">#</a></h2>
+<p>Para viabilizar la ejecución en nodos acústicos alimentados por energía solar o microcontroladores embebidos:</p>
+<ol>
+<li><strong>Entrenamiento de Ensamble Maestro:</strong> Modelos de alta capacidad (EfficientNet-B3 y Audio Spectrogram Transformer) entrenados con función de pérdida focal binaria (<em>Binary Focal Loss</em>) para penalizar falsos positivos.</li>
+<li><strong>Destilación de Conocimiento:</strong> Se entrena un modelo estudiante ultraligero (MobileNetV3 / ResNet-18) minimizando la divergencia Kullback-Leibler frente a las salidas suavizadas (<em>soft labels</em>) del ensamble.</li>
+<li><strong>Cuantización a FP16/INT8:</strong> Reducción del tamaño de pesos a menos de 20 MB y ejecución a más de 45 cuadros por segundo en CPU estándar.</li>
+</ol>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="http://localhost:1313/tags/audio-processing/">Audio Processing</a></li>
+      <li><a href="http://localhost:1313/tags/deep-learning/">Deep Learning</a></li>
+      <li><a href="http://localhost:1313/tags/pytorch/">PyTorch</a></li>
+      <li><a href="http://localhost:1313/tags/bioacoustics/">Bioacoustics</a></li>
+      <li><a href="http://localhost:1313/tags/kaggle/">Kaggle</a></li>
+      <li><a href="http://localhost:1313/tags/edge-ai/">Edge AI</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="http://localhost:1313/arquitectura/taxonomia-optimizadores-ahfe/">
+    <span class="title">« Anterior</span>
+    <span>Taxonomía de Optimizadores de Deep Learning (AHFE 2026)</span>
+  </a>
+  <a class="next" href="http://localhost:1313/arquitectura/lynx-cores-cloud-edge/">
+    <span class="title">Siguiente »</span>
+    <span>Lynx Cores (Vixora Tech) — Arquitectura Fitosanitaria Edge-to-Cloud</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="http://localhost:1313/">Jonathan Luzuriaga | Systems &amp; Applied AI</a></span> · 
+
+    
+    
+    <span>
+        Powered by
+        <a href="https://gohugo.io/?utm_source=papermod" rel="noopener" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" id="top-link" class="top-link hidden" aria-label="go to top" title="Go to Top (Alt + G)" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-up">
+        <polyline points="17 11 12 6 7 11"></polyline>
+        <polyline points="17 18 12 13 7 18"></polyline>
+    </svg>
+</a><script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const mermaidNodes = document.querySelectorAll('.mermaid');
+    if (mermaidNodes.length > 0) {
+        const isDark = document.body.classList.contains('dark') || 
+                       (localStorage.getItem('pref-theme') === 'dark');
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: isDark ? 'dark' : 'neutral',
+            securityLevel: 'loose'
+        });
+        mermaid.run({
+            nodes: mermaidNodes
+        }).catch(function(e) {
+             
+        });
+    }
+});
+</script>
+
+
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var toplink = document.getElementById("top-link");
+    window.onscroll = function () {
+        const scrollThreshold = window.innerHeight;
+        if (document.body.scrollTop > scrollThreshold || document.documentElement.scrollTop > scrollThreshold) {
+            toplink.classList.remove("hidden");
+        } else {
+            toplink.classList.add("hidden");
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copiar';
+
+        function copyingDone() {
+            copybutton.innerHTML = '¡copiado!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copiar';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

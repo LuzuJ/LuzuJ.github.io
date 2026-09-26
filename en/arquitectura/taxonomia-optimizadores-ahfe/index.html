@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto" data-theme="dark">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Deep Learning Optimizer Taxonomy (AHFE 2026) | Jonathan Luzuriaga | Systems &amp; Applied AI</title>
+<meta name="keywords" content="Deep Learning, Optimizers, Research, AHFE 2026, Python, VRAM Efficiency">
+<meta name="description" content="Analytical framework of computational and memory efficiency in emerging optimizers (Lion, Sophia, Adan) for large-scale AI training.">
+<meta name="author" content="Jonathan Luzuriaga">
+<link rel="canonical" href="http://localhost:1313/en/arquitectura/taxonomia-optimizadores-ahfe/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.eef372f5c345e0e577dd4953b39230b064a9a45edeee73e89a21ffa0b59c5d18.css" integrity="sha256-7vNy9cNF4OV33UlTs5IwsGSppF7e7nPomiH/oLWcXRg=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="es" href="http://localhost:1313/arquitectura/taxonomia-optimizadores-ahfe/">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/en/arquitectura/taxonomia-optimizadores-ahfe/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+</noscript>
+<script>
+    if (localStorage.getItem("pref-theme") === "light") {
+        document.querySelector("html").dataset.theme = 'light';
+    }
+
+</script><meta property="og:url" content="http://localhost:1313/en/arquitectura/taxonomia-optimizadores-ahfe/">
+  <meta property="og:site_name" content="Jonathan Luzuriaga | Systems & Applied AI">
+  <meta property="og:title" content="Deep Learning Optimizer Taxonomy (AHFE 2026)">
+  <meta property="og:description" content="Analytical framework of computational and memory efficiency in emerging optimizers (Lion, Sophia, Adan) for large-scale AI training.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="arquitectura">
+    <meta property="article:published_time" content="2026-09-25T00:00:00+00:00">
+    <meta property="article:modified_time" content="2026-09-25T00:00:00+00:00">
+    <meta property="article:tag" content="Deep Learning">
+    <meta property="article:tag" content="Optimizers">
+    <meta property="article:tag" content="Research">
+    <meta property="article:tag" content="AHFE 2026">
+    <meta property="article:tag" content="Python">
+    <meta property="article:tag" content="VRAM Efficiency">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Deep Learning Optimizer Taxonomy (AHFE 2026)">
+  <meta name="twitter:description" content="Analytical framework of computational and memory efficiency in emerging optimizers (Lion, Sophia, Adan) for large-scale AI training.">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Systems Architecture \u0026 Empirical Modeling",
+      "item": "http://localhost:1313/en/arquitectura/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Deep Learning Optimizer Taxonomy (AHFE 2026)",
+      "item": "http://localhost:1313/en/arquitectura/taxonomia-optimizadores-ahfe/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Deep Learning Optimizer Taxonomy (AHFE 2026)",
+  "name": "Deep Learning Optimizer Taxonomy (AHFE 2026)",
+  "description": "Analytical framework of computational and memory efficiency in emerging optimizers (Lion, Sophia, Adan) for large-scale AI training.",
+  "keywords": [
+    "Deep Learning", "Optimizers", "Research", "AHFE 2026", "Python", "VRAM Efficiency"
+  ],
+  "articleBody": " View Code (GitHub) Open Access Publication Presentation Certificate (PDF) 1. Research Context \u0026 Publication Conference: 17th International Conference on Applied Human Factors and Ergonomics (AHFE 2026), Fenerbahçe University, Istanbul, Turkey. Paper Title: A Unified Taxonomy of Deep Learning Optimizers for Scalable and Efficient AI Systems. Publisher: AHFE Open Access, Vol. 203. DOI: 10.54941/ahfe1008074 Paper ID: 1410 2. The Core Bottleneck: Memory Wall in Large Model Training Distributed training of Large Language Models (LLMs) is fundamentally bounded by GPU High-Bandwidth Memory (HBM/VRAM) rather than raw tensor arithmetic capabilities.\nThe industry default optimizer, AdamW, tracks two 32-bit floating-point state tensors per parameter:\nFirst moment (momentum vector, $m_t$): 4 bytes/parameter. Second moment (uncentered variance, $v_t$): 4 bytes/parameter. For a 7-billion parameter (7B) architecture, optimizer states alone consume 56 GB of pure VRAM, necessitating complex sharding schemes (ZeRO Stage 3 / FSDP) that increase inter-node network communications.\n3. Mechanistic Justification of Emerging Optimizers Our research unified optimizers by mathematical order, memory footprint, and compatibility with IO-aware kernels (such as FlashAttention):\nOptimizer Order State Tensors Memory Footprint vs AdamW Stability Mechanism AdamW 1st Order $m_t, v_t$ (2 tensors) 1.0x (Baseline) Coordinate-wise adaptive $L_2$ rescaling Lion 1st Order $c_t$ (1 tensor) 0.5x (-50% VRAM) Non-linear sign operation $\\text{sign}(\\beta_1 m_t + (1-\\beta_1) g_t)$ Sophia 2nd Order $m_t, \\hat{h}_t$ (2 tensors) 1.0x (Accelerated steps) Diagonal stochastic Hessian with aggressive coordinate clipping Adan 1st Order $m_t, v_t, n_t$ (3 tensors) 1.5x Decoupled Nesterov momentum and finite gradient differences 3.1. Lion (EvoLved Sign Momentum) Lion discards tracking of variance $v_t$ entirely: $$c_t = \\beta_1 m_{t-1} + (1 - \\beta_1) g_t$$ $$\\theta_t \\leftarrow \\theta_{t-1} - \\eta_t (\\text{sign}(c_t) + \\lambda \\theta_{t-1})$$ $$m_t = \\beta_2 m_{t-1} + (1 - \\beta_2) g_t$$\nOperational Advantage: The coordinate-wise sign operation imposes uniform step magnitudes across all dimensions, acting as an implicit regularizer. Slashing optimizer state memory by 50% allows larger batch sizes and higher GPU compute utilization. 3.2. Sophia (Second-order Clipped Stochastic Hessian) Unlike standard second-order methods with intractable $\\mathcal{O}(d^2)$ Hessian storage, Sophia estimates a stochastic diagonal $\\hat{h}t$ using Hutchinson’s estimator every $k$ iterations: $$\\theta_t \\leftarrow \\theta{t-1} - \\eta_t \\cdot \\text{clip}\\left( \\frac{m_t}{\\max(\\hat{h}_t, \\epsilon)}, \\rho \\right)$$\nOperational Advantage: Element-wise clipping ensures gradients navigating sharp non-convex ravines do not explode, achieving convergence with up to 50% fewer steps on language modeling tasks. 4. Symbolic Optimizer Search (Experimentos-LLMs) To empirically validate mathematical variants, we built an evolutionary search pipeline in Python:\nAST Computation Graph Formulation: Generates symbolic expressions combining arithmetic operators, temporal momentum filters, and norm normalizations. Isolated Benchmark Runner: Evaluates candidates across convex and non-convex test surfaces to measure convergence rate, wall-clock time, and numerical stability. ",
+  "wordCount" : "428",
+  "inLanguage": "en",
+  "datePublished": "2026-09-25T00:00:00Z",
+  "dateModified": "2026-09-25T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "Jonathan Luzuriaga"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "http://localhost:1313/en/arquitectura/taxonomia-optimizadores-ahfe/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Jonathan Luzuriaga | Systems \u0026 Applied AI",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "http://localhost:1313/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="header-nav">
+        <div class="logo">
+            <a href="http://localhost:1313/en/" accesskey="h" title="Jonathan Luzuriaga | Systems &amp; Applied AI (Alt + H)">Jonathan Luzuriaga | Systems &amp; Applied AI</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" class="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button><span class="nav-sep">|</span>
+                    <ul class="lang-menu">
+                        <li>
+                            <a href="http://localhost:1313/" title="ES"
+                                aria-label="ES">ES</a>
+                        </li>
+                    </ul>
+            </div>
+        </div>
+        <ul id="menu" class="menu">
+            <li>
+                <a href="http://localhost:1313/en/arquitectura/juez-seguro/" title="Distributed Systems">
+                    <span>Distributed Systems</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/en/arquitectura/" title="Research &amp; AI">
+                    <span>Research &amp; AI</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/en/arquitectura/manticore-orquestacion-n8n/" title="Orchestration &amp; CI/CD">
+                    <span>Orchestration &amp; CI/CD</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/en/credenciales/dse-eccouncil/" title="Audited Credentials">
+                    <span>Audited Credentials</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/en/docs/jonathan_j_luzuriaga_cv_en.pdf" title="Resume (PDF)">
+                    <span>Resume (PDF)</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <nav class="breadcrumbs" role="navigation" aria-label="Breadcrumb">
+            <a href="/en/">Home</a>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <a href="/en/arquitectura/">Systems Architecture &amp; Empirical Modeling</a>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+        <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+</nav>
+    <h1 class="post-title entry-hint-parent">
+      Deep Learning Optimizer Taxonomy (AHFE 2026)
+    </h1>
+    <div class="post-description">
+      Analytical framework of computational and memory efficiency in emerging optimizers (Lion, Sophia, Adan) for large-scale AI training.
+    </div>
+    <div class="post-meta">
+
+<span title='2026-09-25 00:00:00 +0000 UTC'>September 25, 2026</span>&nbsp;·&nbsp;<span>3 min</span>&nbsp;·&nbsp;<span>Jonathan Luzuriaga</span>&nbsp;|&nbsp;<span>Translations:</span>
+    <ul class="i18n_list">
+        <li>
+            <a href="http://localhost:1313/arquitectura/taxonomia-optimizadores-ahfe/">ES</a>
+        </li>
+    </ul>
+
+</div>
+  </header> <details class="toc" >
+    <summary accesskey="c" title="(Alt + C)">
+        <span class="title">Table of Contents</span>
+    </summary>
+
+    <div class="inner"><ul>
+            <li>
+                <a href="#1-research-context--publication" aria-label="1. Research Context &amp; Publication">1. Research Context &amp; Publication</a></li>
+            <li>
+                <a href="#2-the-core-bottleneck-memory-wall-in-large-model-training" aria-label="2. The Core Bottleneck: Memory Wall in Large Model Training">2. The Core Bottleneck: Memory Wall in Large Model Training</a></li>
+            <li>
+                <a href="#3-mechanistic-justification-of-emerging-optimizers" aria-label="3. Mechanistic Justification of Emerging Optimizers">3. Mechanistic Justification of Emerging Optimizers</a><ul>
+                    
+            <li>
+                <a href="#31-lion-evolved-sign-momentum" aria-label="3.1. Lion (EvoLved Sign Momentum)">3.1. Lion (EvoLved Sign Momentum)</a></li>
+            <li>
+                <a href="#32-sophia-second-order-clipped-stochastic-hessian" aria-label="3.2. Sophia (Second-order Clipped Stochastic Hessian)">3.2. Sophia (Second-order Clipped Stochastic Hessian)</a></li></ul>
+            </li>
+            <li>
+                <a href="#4-symbolic-optimizer-search-experimentos-llms" aria-label="4. Symbolic Optimizer Search (Experimentos-LLMs)">4. Symbolic Optimizer Search (Experimentos-LLMs)</a>
+            </li>
+        </ul>
+    </div>
+</details>
+
+  <div class="post-content md-content"><div class="action-links">
+  <a class="action-btn btn-code" href="https://github.com/LuzuJ/Experimentos-LLMs" target="_blank" rel="noopener">View Code (GitHub)</a>
+  <a class="action-btn btn-code" href="https://openaccess.cms-conferences.org/publications/book/978-1-964867-79-3/article/978-1-964867-79-3_15" target="_blank" rel="noopener">Open Access Publication</a>
+  <a class="action-btn btn-doc" href="/docs/AHFE2026_Certificate_Jonathan_Luzuriaga.pdf" target="_blank">Presentation Certificate (PDF)</a>
+</div>
+<h2 id="1-research-context--publication">1. Research Context &amp; Publication<a hidden class="anchor" aria-hidden="true" href="#1-research-context--publication">#</a></h2>
+<ul>
+<li><strong>Conference:</strong> 17th International Conference on Applied Human Factors and Ergonomics (AHFE 2026), Fenerbahçe University, Istanbul, Turkey.</li>
+<li><strong>Paper Title:</strong> <em>A Unified Taxonomy of Deep Learning Optimizers for Scalable and Efficient AI Systems</em>.</li>
+<li><strong>Publisher:</strong> AHFE Open Access, Vol. 203.</li>
+<li><strong>DOI:</strong> <a href="https://doi.org/10.54941/ahfe1008074">10.54941/ahfe1008074</a></li>
+<li><strong>Paper ID:</strong> 1410</li>
+</ul>
+<h2 id="2-the-core-bottleneck-memory-wall-in-large-model-training">2. The Core Bottleneck: Memory Wall in Large Model Training<a hidden class="anchor" aria-hidden="true" href="#2-the-core-bottleneck-memory-wall-in-large-model-training">#</a></h2>
+<p>Distributed training of Large Language Models (LLMs) is fundamentally bounded by <strong>GPU High-Bandwidth Memory (HBM/VRAM)</strong> rather than raw tensor arithmetic capabilities.</p>
+<p>The industry default optimizer, <strong>AdamW</strong>, tracks two 32-bit floating-point state tensors per parameter:</p>
+<ul>
+<li>First moment (momentum vector, $m_t$): 4 bytes/parameter.</li>
+<li>Second moment (uncentered variance, $v_t$): 4 bytes/parameter.</li>
+</ul>
+<p>For a 7-billion parameter (7B) architecture, optimizer states alone consume <strong>56 GB of pure VRAM</strong>, necessitating complex sharding schemes (ZeRO Stage 3 / FSDP) that increase inter-node network communications.</p>
+<h2 id="3-mechanistic-justification-of-emerging-optimizers">3. Mechanistic Justification of Emerging Optimizers<a hidden class="anchor" aria-hidden="true" href="#3-mechanistic-justification-of-emerging-optimizers">#</a></h2>
+<p>Our research unified optimizers by mathematical order, memory footprint, and compatibility with <em>IO-aware</em> kernels (such as FlashAttention):</p>
+<table>
+	<thead>
+			<tr>
+					<th style="text-align: left">Optimizer</th>
+					<th style="text-align: left">Order</th>
+					<th style="text-align: left">State Tensors</th>
+					<th style="text-align: left">Memory Footprint vs AdamW</th>
+					<th style="text-align: left">Stability Mechanism</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td style="text-align: left"><strong>AdamW</strong></td>
+					<td style="text-align: left">1st Order</td>
+					<td style="text-align: left">$m_t, v_t$ (2 tensors)</td>
+					<td style="text-align: left">1.0x (Baseline)</td>
+					<td style="text-align: left">Coordinate-wise adaptive $L_2$ rescaling</td>
+			</tr>
+			<tr>
+					<td style="text-align: left"><strong>Lion</strong></td>
+					<td style="text-align: left">1st Order</td>
+					<td style="text-align: left">$c_t$ (1 tensor)</td>
+					<td style="text-align: left"><strong>0.5x (-50% VRAM)</strong></td>
+					<td style="text-align: left">Non-linear sign operation $\text{sign}(\beta_1 m_t + (1-\beta_1) g_t)$</td>
+			</tr>
+			<tr>
+					<td style="text-align: left"><strong>Sophia</strong></td>
+					<td style="text-align: left">2nd Order</td>
+					<td style="text-align: left">$m_t, \hat{h}_t$ (2 tensors)</td>
+					<td style="text-align: left">1.0x (Accelerated steps)</td>
+					<td style="text-align: left">Diagonal stochastic Hessian with aggressive coordinate clipping</td>
+			</tr>
+			<tr>
+					<td style="text-align: left"><strong>Adan</strong></td>
+					<td style="text-align: left">1st Order</td>
+					<td style="text-align: left">$m_t, v_t, n_t$ (3 tensors)</td>
+					<td style="text-align: left">1.5x</td>
+					<td style="text-align: left">Decoupled Nesterov momentum and finite gradient differences</td>
+			</tr>
+	</tbody>
+</table>
+<h3 id="31-lion-evolved-sign-momentum">3.1. Lion (EvoLved Sign Momentum)<a hidden class="anchor" aria-hidden="true" href="#31-lion-evolved-sign-momentum">#</a></h3>
+<p>Lion discards tracking of variance $v_t$ entirely:
+$$c_t = \beta_1 m_{t-1} + (1 - \beta_1) g_t$$
+$$\theta_t \leftarrow \theta_{t-1} - \eta_t (\text{sign}(c_t) + \lambda \theta_{t-1})$$
+$$m_t = \beta_2 m_{t-1} + (1 - \beta_2) g_t$$</p>
+<ul>
+<li><strong>Operational Advantage:</strong> The coordinate-wise <code>sign</code> operation imposes uniform step magnitudes across all dimensions, acting as an implicit regularizer. Slashing optimizer state memory by 50% allows larger batch sizes and higher GPU compute utilization.</li>
+</ul>
+<h3 id="32-sophia-second-order-clipped-stochastic-hessian">3.2. Sophia (Second-order Clipped Stochastic Hessian)<a hidden class="anchor" aria-hidden="true" href="#32-sophia-second-order-clipped-stochastic-hessian">#</a></h3>
+<p>Unlike standard second-order methods with intractable $\mathcal{O}(d^2)$ Hessian storage, Sophia estimates a stochastic diagonal $\hat{h}<em>t$ using Hutchinson&rsquo;s estimator every $k$ iterations:
+$$\theta_t \leftarrow \theta</em>{t-1} - \eta_t \cdot \text{clip}\left( \frac{m_t}{\max(\hat{h}_t, \epsilon)}, \rho \right)$$</p>
+<ul>
+<li><strong>Operational Advantage:</strong> Element-wise clipping ensures gradients navigating sharp non-convex ravines do not explode, achieving convergence with up to 50% fewer steps on language modeling tasks.</li>
+</ul>
+<h2 id="4-symbolic-optimizer-search-experimentos-llms">4. Symbolic Optimizer Search (Experimentos-LLMs)<a hidden class="anchor" aria-hidden="true" href="#4-symbolic-optimizer-search-experimentos-llms">#</a></h2>
+<p>To empirically validate mathematical variants, we built an evolutionary search pipeline in Python:</p>
+<ul>
+<li><strong>AST Computation Graph Formulation:</strong> Generates symbolic expressions combining arithmetic operators, temporal momentum filters, and norm normalizations.</li>
+<li><strong>Isolated Benchmark Runner:</strong> Evaluates candidates across convex and non-convex test surfaces to measure convergence rate, wall-clock time, and numerical stability.</li>
+</ul>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="http://localhost:1313/en/tags/deep-learning/">Deep Learning</a></li>
+      <li><a href="http://localhost:1313/en/tags/optimizers/">Optimizers</a></li>
+      <li><a href="http://localhost:1313/en/tags/research/">Research</a></li>
+      <li><a href="http://localhost:1313/en/tags/ahfe-2026/">AHFE 2026</a></li>
+      <li><a href="http://localhost:1313/en/tags/python/">Python</a></li>
+      <li><a href="http://localhost:1313/en/tags/vram-efficiency/">VRAM Efficiency</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="http://localhost:1313/en/arquitectura/juez-seguro/">
+    <span class="title">« Prev</span>
+    <span>El Juez Seguro — C4 Architecture, Zero-Trust &amp; Immutable Ledger</span>
+  </a>
+  <a class="next" href="http://localhost:1313/en/arquitectura/birdclef-acustica/">
+    <span class="title">Next »</span>
+    <span>Continuous Bioacoustics Pipeline (BirdCLEF 2026)</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="http://localhost:1313/en/">Jonathan Luzuriaga | Systems &amp; Applied AI</a></span> · 
+
+    
+    
+    <span>
+        Powered by
+        <a href="https://gohugo.io/?utm_source=papermod" rel="noopener" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" id="top-link" class="top-link hidden" aria-label="go to top" title="Go to Top (Alt + G)" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-up">
+        <polyline points="17 11 12 6 7 11"></polyline>
+        <polyline points="17 18 12 13 7 18"></polyline>
+    </svg>
+</a><script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const mermaidNodes = document.querySelectorAll('.mermaid');
+    if (mermaidNodes.length > 0) {
+        const isDark = document.body.classList.contains('dark') || 
+                       (localStorage.getItem('pref-theme') === 'dark');
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: isDark ? 'dark' : 'neutral',
+            securityLevel: 'loose'
+        });
+        mermaid.run({
+            nodes: mermaidNodes
+        }).catch(function(e) {
+             
+        });
+    }
+});
+</script>
+
+
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var toplink = document.getElementById("top-link");
+    window.onscroll = function () {
+        const scrollThreshold = window.innerHeight;
+        if (document.body.scrollTop > scrollThreshold || document.documentElement.scrollTop > scrollThreshold) {
+            toplink.classList.remove("hidden");
+        } else {
+            toplink.classList.add("hidden");
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

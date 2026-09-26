@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="es" dir="auto" data-theme="dark">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Taxonomía de Optimizadores de Deep Learning (AHFE 2026) | Jonathan Luzuriaga | Systems &amp; Applied AI</title>
+<meta name="keywords" content="Deep Learning, Optimizers, Research, AHFE 2026, Python, VRAM Efficiency">
+<meta name="description" content="Marco analítico de eficiencia computacional y memoria en optimizadores emergentes (Lion, Sophia, Adan) para el escalado de modelos masivos.">
+<meta name="author" content="Jonathan Luzuriaga">
+<link rel="canonical" href="http://localhost:1313/arquitectura/taxonomia-optimizadores-ahfe/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.eef372f5c345e0e577dd4953b39230b064a9a45edeee73e89a21ffa0b59c5d18.css" integrity="sha256-7vNy9cNF4OV33UlTs5IwsGSppF7e7nPomiH/oLWcXRg=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="es" href="http://localhost:1313/arquitectura/taxonomia-optimizadores-ahfe/">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/en/arquitectura/taxonomia-optimizadores-ahfe/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+</noscript>
+<script>
+    if (localStorage.getItem("pref-theme") === "light") {
+        document.querySelector("html").dataset.theme = 'light';
+    }
+
+</script><meta property="og:url" content="http://localhost:1313/arquitectura/taxonomia-optimizadores-ahfe/">
+  <meta property="og:site_name" content="Jonathan Luzuriaga | Systems & Applied AI">
+  <meta property="og:title" content="Taxonomía de Optimizadores de Deep Learning (AHFE 2026)">
+  <meta property="og:description" content="Marco analítico de eficiencia computacional y memoria en optimizadores emergentes (Lion, Sophia, Adan) para el escalado de modelos masivos.">
+  <meta property="og:locale" content="es">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="arquitectura">
+    <meta property="article:published_time" content="2026-09-25T00:00:00+00:00">
+    <meta property="article:modified_time" content="2026-09-25T00:00:00+00:00">
+    <meta property="article:tag" content="Deep Learning">
+    <meta property="article:tag" content="Optimizers">
+    <meta property="article:tag" content="Research">
+    <meta property="article:tag" content="AHFE 2026">
+    <meta property="article:tag" content="Python">
+    <meta property="article:tag" content="VRAM Efficiency">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Taxonomía de Optimizadores de Deep Learning (AHFE 2026)">
+  <meta name="twitter:description" content="Marco analítico de eficiencia computacional y memoria en optimizadores emergentes (Lion, Sophia, Adan) para el escalado de modelos masivos.">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Arquitectura de Sistemas \u0026 Modelado Empírico",
+      "item": "http://localhost:1313/arquitectura/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Taxonomía de Optimizadores de Deep Learning (AHFE 2026)",
+      "item": "http://localhost:1313/arquitectura/taxonomia-optimizadores-ahfe/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Taxonomía de Optimizadores de Deep Learning (AHFE 2026)",
+  "name": "Taxonomía de Optimizadores de Deep Learning (AHFE 2026)",
+  "description": "Marco analítico de eficiencia computacional y memoria en optimizadores emergentes (Lion, Sophia, Adan) para el escalado de modelos masivos.",
+  "keywords": [
+    "Deep Learning", "Optimizers", "Research", "AHFE 2026", "Python", "VRAM Efficiency"
+  ],
+  "articleBody": " Ver Código (GitHub) Publicación (Open Access) Certificado de Presentación (PDF) 1. Contexto de Investigación y Publicación Conferencia: 17th International Conference on Applied Human Factors and Ergonomics (AHFE 2026), Fenerbahçe University, Estambul, Turquía. Artículo: A Unified Taxonomy of Deep Learning Optimizers for Scalable and Efficient AI Systems. Publicación Oficial: AHFE Open Access, Vol. 203. DOI: 10.54941/ahfe1008074 Paper ID: 1410 2. El Cuello de Botella: El Muro de Memoria en el Entrenamiento de IA El entrenamiento distribuido de modelos de lenguaje (LLMs) y modelos de visión a gran escala está acotado fundamentalmente por el ancho de banda y la capacidad de la memoria de la GPU (VRAM) más que por la capacidad pura de FLOPS de cómputo.\nEl optimizador hegemónico en la industria, AdamW, requiere mantener dos estados en memoria por cada parámetro del modelo en precisión simple (FP32):\nPrimer momento (media móvil del gradiente, $m_t$): 4 bytes por parámetro. Segundo momento (media móvil del gradiente al cuadrado, $v_t$): 4 bytes por parámetro. Para un modelo de 7 mil millones de parámetros (7B), los estados del optimizador demandan 56 GB de memoria pura, obligando a recurrir a técnicas de particionado complejas (ZeRO Stage 3, FSDP) que incrementan sustancialmente el tráfico de comunicación entre nodos.\n3. Justificación Mecanística de Optimizadores Emergentes Nuestra investigación estructuró una taxonomía unificada clasificando algoritmos por su orden matemático, consumo de memoria y adaptabilidad a arquitecturas IO-aware (como FlashAttention):\nOptimizador Orden Estados de Memoria Coste VRAM vs AdamW Mecanismo de Estabilidad AdamW 1er Orden $m_t, v_t$ (2 tensores) 1.0x (Línea base) Normalización $L_2$ adaptativa por coordenada Lion 1er Orden $c_t$ (1 tensor) 0.5x (-50% VRAM) Operación signo no lineal $\\text{sign}(\\beta_1 m_t + (1-\\beta_1) g_t)$ Sophia 2do Orden $m_t, \\hat{h}_t$ (2 tensores) 1.0x (convergencia acelerada) Precondicionador diagonal de Hessiano con clipping agresivo Adan 1er Orden $m_t, v_t, n_t$ (3 tensores) 1.5x Aceleración Nesterov + diferencias finitas de gradiente 3.1. Lion (EvoLved Sign Momentum) Lion elimina completamente el tracking del segundo momento $v_t$. La regla de actualización se formula como: $$c_t = \\beta_1 m_{t-1} + (1 - \\beta_1) g_t$$ $$\\theta_t \\leftarrow \\theta_{t-1} - \\eta_t (\\text{sign}(c_t) + \\lambda \\theta_{t-1})$$ $$m_t = \\beta_2 m_{t-1} + (1 - \\beta_2) g_t$$\nVentaja Operativa: Al usar la función $\\text{sign}(\\cdot)$, cada coordenada se actualiza con una magnitud uniforme, actuando como una regularización implícita. Esto reduce el consumo de memoria a la mitad y permite incrementar el tamaño de lote efectivo (batch size). 3.2. Sophia (Second-order Clipped Stochastic Hessian) A diferencia de los métodos tradicionales de segundo orden cuyo cálculo del Hessiano completo tiene complejidad $\\mathcal{O}(d^2)$, Sophia calcula una aproximación diagonal estocástica $\\hat{h}t$ usando el estimador de Hutchinson cada $k$ pasos: $$\\theta_t \\leftarrow \\theta{t-1} - \\eta_t \\cdot \\text{clip}\\left( \\frac{m_t}{\\max(\\hat{h}_t, \\epsilon)}, \\rho \\right)$$\nVentaja Operativa: El operador de recorte $\\text{clip}(\\cdot, \\rho)$ garantiza que gradientes erráticos en regiones de curvatura negativa o valles estrechos no desestabilicen el entrenamiento, logrando convergencia con hasta un 50% menos de pasos totales en modelos de lenguaje. 4. Descubrimiento Algorítmico Simbólico (Experimentos-LLMs) Como soporte empírico de la investigación, implementamos un entorno de búsqueda evolutiva en Python (Experimentos-LLMs):\nGenerador de Grafos de Computación: Un árbol sintáctico abstracto (AST) formula algebraicamente nuevas combinaciones de operaciones aritméticas elementales sobre gradientes históricos y estados de momentum. Evaluador Aislado: Cada candidato es evaluado automáticamente sobre problemas de juguete convexos y no convexos para medir tasa de convergencia, divergencia numérica y coste computacional. ",
+  "wordCount" : "552",
+  "inLanguage": "es",
+  "datePublished": "2026-09-25T00:00:00Z",
+  "dateModified": "2026-09-25T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "Jonathan Luzuriaga"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "http://localhost:1313/arquitectura/taxonomia-optimizadores-ahfe/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Jonathan Luzuriaga | Systems \u0026 Applied AI",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "http://localhost:1313/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="header-nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="Jonathan Luzuriaga | Systems &amp; Applied AI (Alt + H)">Jonathan Luzuriaga | Systems &amp; Applied AI</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" class="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button><span class="nav-sep">|</span>
+                    <ul class="lang-menu">
+                        <li>
+                            <a href="http://localhost:1313/en/" title="EN"
+                                aria-label="EN">EN</a>
+                        </li>
+                    </ul>
+            </div>
+        </div>
+        <ul id="menu" class="menu">
+            <li>
+                <a href="http://localhost:1313/arquitectura/juez-seguro/" title="Sistemas Distribuidos">
+                    <span>Sistemas Distribuidos</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/arquitectura/" title="Investigación &amp; IA">
+                    <span>Investigación &amp; IA</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/arquitectura/manticore-orquestacion-n8n/" title="Orquestación &amp; CI/CD">
+                    <span>Orquestación &amp; CI/CD</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/credenciales/dse-eccouncil/" title="Credenciales Auditadas">
+                    <span>Credenciales Auditadas</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/docs/cv_jonathan_j_luzuriaga_es.pdf" title="CV (PDF)">
+                    <span>CV (PDF)</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <nav class="breadcrumbs" role="navigation" aria-label="Breadcrumb">
+            <a href="/">Inicio</a>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <a href="/arquitectura/">Arquitectura de Sistemas &amp; Modelado Empírico</a>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+        <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+</nav>
+    <h1 class="post-title entry-hint-parent">
+      Taxonomía de Optimizadores de Deep Learning (AHFE 2026)
+    </h1>
+    <div class="post-description">
+      Marco analítico de eficiencia computacional y memoria en optimizadores emergentes (Lion, Sophia, Adan) para el escalado de modelos masivos.
+    </div>
+    <div class="post-meta">
+
+<span title='2026-09-25 00:00:00 +0000 UTC'>25 de septiembre de 2026</span>&nbsp;·&nbsp;<span>3 min</span>&nbsp;·&nbsp;<span>Jonathan Luzuriaga</span>&nbsp;|&nbsp;<span>Traducciones:</span>
+    <ul class="i18n_list">
+        <li>
+            <a href="http://localhost:1313/en/arquitectura/taxonomia-optimizadores-ahfe/">EN</a>
+        </li>
+    </ul>
+
+</div>
+  </header> <details class="toc" >
+    <summary accesskey="c" title="(Alt + C)">
+        <span class="title">Tabla de Contenidos</span>
+    </summary>
+
+    <div class="inner"><ul>
+            <li>
+                <a href="#1-contexto-de-investigaci%c3%b3n-y-publicaci%c3%b3n" aria-label="1. Contexto de Investigación y Publicación">1. Contexto de Investigación y Publicación</a></li>
+            <li>
+                <a href="#2-el-cuello-de-botella-el-muro-de-memoria-en-el-entrenamiento-de-ia" aria-label="2. El Cuello de Botella: El Muro de Memoria en el Entrenamiento de IA">2. El Cuello de Botella: El Muro de Memoria en el Entrenamiento de IA</a></li>
+            <li>
+                <a href="#3-justificaci%c3%b3n-mecan%c3%adstica-de-optimizadores-emergentes" aria-label="3. Justificación Mecanística de Optimizadores Emergentes">3. Justificación Mecanística de Optimizadores Emergentes</a><ul>
+                    
+            <li>
+                <a href="#31-lion-evolved-sign-momentum" aria-label="3.1. Lion (EvoLved Sign Momentum)">3.1. Lion (EvoLved Sign Momentum)</a></li>
+            <li>
+                <a href="#32-sophia-second-order-clipped-stochastic-hessian" aria-label="3.2. Sophia (Second-order Clipped Stochastic Hessian)">3.2. Sophia (Second-order Clipped Stochastic Hessian)</a></li></ul>
+            </li>
+            <li>
+                <a href="#4-descubrimiento-algor%c3%adtmico-simb%c3%b3lico-experimentos-llms" aria-label="4. Descubrimiento Algorítmico Simbólico (Experimentos-LLMs)">4. Descubrimiento Algorítmico Simbólico (Experimentos-LLMs)</a>
+            </li>
+        </ul>
+    </div>
+</details>
+
+  <div class="post-content md-content"><div class="action-links">
+  <a class="action-btn btn-code" href="https://github.com/LuzuJ/Experimentos-LLMs" target="_blank" rel="noopener">Ver Código (GitHub)</a>
+  <a class="action-btn btn-code" href="https://openaccess.cms-conferences.org/publications/book/978-1-964867-79-3/article/978-1-964867-79-3_15" target="_blank" rel="noopener">Publicación (Open Access)</a>
+  <a class="action-btn btn-doc" href="/docs/AHFE2026_Certificate_Jonathan_Luzuriaga.pdf" target="_blank">Certificado de Presentación (PDF)</a>
+</div>
+<h2 id="1-contexto-de-investigación-y-publicación">1. Contexto de Investigación y Publicación<a hidden class="anchor" aria-hidden="true" href="#1-contexto-de-investigación-y-publicación">#</a></h2>
+<ul>
+<li><strong>Conferencia:</strong> 17th International Conference on Applied Human Factors and Ergonomics (AHFE 2026), Fenerbahçe University, Estambul, Turquía.</li>
+<li><strong>Artículo:</strong> <em>A Unified Taxonomy of Deep Learning Optimizers for Scalable and Efficient AI Systems</em>.</li>
+<li><strong>Publicación Oficial:</strong> AHFE Open Access, Vol. 203.</li>
+<li><strong>DOI:</strong> <a href="https://doi.org/10.54941/ahfe1008074">10.54941/ahfe1008074</a></li>
+<li><strong>Paper ID:</strong> 1410</li>
+</ul>
+<h2 id="2-el-cuello-de-botella-el-muro-de-memoria-en-el-entrenamiento-de-ia">2. El Cuello de Botella: El Muro de Memoria en el Entrenamiento de IA<a hidden class="anchor" aria-hidden="true" href="#2-el-cuello-de-botella-el-muro-de-memoria-en-el-entrenamiento-de-ia">#</a></h2>
+<p>El entrenamiento distribuido de modelos de lenguaje (LLMs) y modelos de visión a gran escala está acotado fundamentalmente por el <strong>ancho de banda y la capacidad de la memoria de la GPU (VRAM)</strong> más que por la capacidad pura de FLOPS de cómputo.</p>
+<p>El optimizador hegemónico en la industria, <strong>AdamW</strong>, requiere mantener dos estados en memoria por cada parámetro del modelo en precisión simple (FP32):</p>
+<ul>
+<li>Primer momento (media móvil del gradiente, $m_t$): 4 bytes por parámetro.</li>
+<li>Segundo momento (media móvil del gradiente al cuadrado, $v_t$): 4 bytes por parámetro.</li>
+</ul>
+<p>Para un modelo de 7 mil millones de parámetros (7B), los estados del optimizador demandan <strong>56 GB de memoria pura</strong>, obligando a recurrir a técnicas de particionado complejas (ZeRO Stage 3, FSDP) que incrementan sustancialmente el tráfico de comunicación entre nodos.</p>
+<h2 id="3-justificación-mecanística-de-optimizadores-emergentes">3. Justificación Mecanística de Optimizadores Emergentes<a hidden class="anchor" aria-hidden="true" href="#3-justificación-mecanística-de-optimizadores-emergentes">#</a></h2>
+<p>Nuestra investigación estructuró una taxonomía unificada clasificando algoritmos por su orden matemático, consumo de memoria y adaptabilidad a arquitecturas <em>IO-aware</em> (como FlashAttention):</p>
+<table>
+	<thead>
+			<tr>
+					<th style="text-align: left">Optimizador</th>
+					<th style="text-align: left">Orden</th>
+					<th style="text-align: left">Estados de Memoria</th>
+					<th style="text-align: left">Coste VRAM vs AdamW</th>
+					<th style="text-align: left">Mecanismo de Estabilidad</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td style="text-align: left"><strong>AdamW</strong></td>
+					<td style="text-align: left">1er Orden</td>
+					<td style="text-align: left">$m_t, v_t$ (2 tensores)</td>
+					<td style="text-align: left">1.0x (Línea base)</td>
+					<td style="text-align: left">Normalización $L_2$ adaptativa por coordenada</td>
+			</tr>
+			<tr>
+					<td style="text-align: left"><strong>Lion</strong></td>
+					<td style="text-align: left">1er Orden</td>
+					<td style="text-align: left">$c_t$ (1 tensor)</td>
+					<td style="text-align: left"><strong>0.5x (-50% VRAM)</strong></td>
+					<td style="text-align: left">Operación signo no lineal $\text{sign}(\beta_1 m_t + (1-\beta_1) g_t)$</td>
+			</tr>
+			<tr>
+					<td style="text-align: left"><strong>Sophia</strong></td>
+					<td style="text-align: left">2do Orden</td>
+					<td style="text-align: left">$m_t, \hat{h}_t$ (2 tensores)</td>
+					<td style="text-align: left">1.0x (convergencia acelerada)</td>
+					<td style="text-align: left">Precondicionador diagonal de Hessiano con clipping agresivo</td>
+			</tr>
+			<tr>
+					<td style="text-align: left"><strong>Adan</strong></td>
+					<td style="text-align: left">1er Orden</td>
+					<td style="text-align: left">$m_t, v_t, n_t$ (3 tensores)</td>
+					<td style="text-align: left">1.5x</td>
+					<td style="text-align: left">Aceleración Nesterov + diferencias finitas de gradiente</td>
+			</tr>
+	</tbody>
+</table>
+<h3 id="31-lion-evolved-sign-momentum">3.1. Lion (EvoLved Sign Momentum)<a hidden class="anchor" aria-hidden="true" href="#31-lion-evolved-sign-momentum">#</a></h3>
+<p>Lion elimina completamente el tracking del segundo momento $v_t$. La regla de actualización se formula como:
+$$c_t = \beta_1 m_{t-1} + (1 - \beta_1) g_t$$
+$$\theta_t \leftarrow \theta_{t-1} - \eta_t (\text{sign}(c_t) + \lambda \theta_{t-1})$$
+$$m_t = \beta_2 m_{t-1} + (1 - \beta_2) g_t$$</p>
+<ul>
+<li><strong>Ventaja Operativa:</strong> Al usar la función $\text{sign}(\cdot)$, cada coordenada se actualiza con una magnitud uniforme, actuando como una regularización implícita. Esto reduce el consumo de memoria a la mitad y permite incrementar el tamaño de lote efectivo (<em>batch size</em>).</li>
+</ul>
+<h3 id="32-sophia-second-order-clipped-stochastic-hessian">3.2. Sophia (Second-order Clipped Stochastic Hessian)<a hidden class="anchor" aria-hidden="true" href="#32-sophia-second-order-clipped-stochastic-hessian">#</a></h3>
+<p>A diferencia de los métodos tradicionales de segundo orden cuyo cálculo del Hessiano completo tiene complejidad $\mathcal{O}(d^2)$, Sophia calcula una aproximación diagonal estocástica $\hat{h}<em>t$ usando el estimador de Hutchinson cada $k$ pasos:
+$$\theta_t \leftarrow \theta</em>{t-1} - \eta_t \cdot \text{clip}\left( \frac{m_t}{\max(\hat{h}_t, \epsilon)}, \rho \right)$$</p>
+<ul>
+<li><strong>Ventaja Operativa:</strong> El operador de recorte $\text{clip}(\cdot, \rho)$ garantiza que gradientes erráticos en regiones de curvatura negativa o valles estrechos no desestabilicen el entrenamiento, logrando convergencia con hasta un 50% menos de pasos totales en modelos de lenguaje.</li>
+</ul>
+<h2 id="4-descubrimiento-algorítmico-simbólico-experimentos-llms">4. Descubrimiento Algorítmico Simbólico (Experimentos-LLMs)<a hidden class="anchor" aria-hidden="true" href="#4-descubrimiento-algorítmico-simbólico-experimentos-llms">#</a></h2>
+<p>Como soporte empírico de la investigación, implementamos un entorno de búsqueda evolutiva en Python (<code>Experimentos-LLMs</code>):</p>
+<ul>
+<li><strong>Generador de Grafos de Computación:</strong> Un árbol sintáctico abstracto (AST) formula algebraicamente nuevas combinaciones de operaciones aritméticas elementales sobre gradientes históricos y estados de momentum.</li>
+<li><strong>Evaluador Aislado:</strong> Cada candidato es evaluado automáticamente sobre problemas de juguete convexos y no convexos para medir tasa de convergencia, divergencia numérica y coste computacional.</li>
+</ul>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="http://localhost:1313/tags/deep-learning/">Deep Learning</a></li>
+      <li><a href="http://localhost:1313/tags/optimizers/">Optimizers</a></li>
+      <li><a href="http://localhost:1313/tags/research/">Research</a></li>
+      <li><a href="http://localhost:1313/tags/ahfe-2026/">AHFE 2026</a></li>
+      <li><a href="http://localhost:1313/tags/python/">Python</a></li>
+      <li><a href="http://localhost:1313/tags/vram-efficiency/">VRAM Efficiency</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="http://localhost:1313/arquitectura/juez-seguro/">
+    <span class="title">« Anterior</span>
+    <span>El Juez Seguro — Arquitectura C4, Zero-Trust y Ledger Inmutable</span>
+  </a>
+  <a class="next" href="http://localhost:1313/arquitectura/birdclef-acustica/">
+    <span class="title">Siguiente »</span>
+    <span>Pipeline Multietiqueta de Bioacústica (BirdCLEF 2026)</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="http://localhost:1313/">Jonathan Luzuriaga | Systems &amp; Applied AI</a></span> · 
+
+    
+    
+    <span>
+        Powered by
+        <a href="https://gohugo.io/?utm_source=papermod" rel="noopener" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" id="top-link" class="top-link hidden" aria-label="go to top" title="Go to Top (Alt + G)" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-up">
+        <polyline points="17 11 12 6 7 11"></polyline>
+        <polyline points="17 18 12 13 7 18"></polyline>
+    </svg>
+</a><script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const mermaidNodes = document.querySelectorAll('.mermaid');
+    if (mermaidNodes.length > 0) {
+        const isDark = document.body.classList.contains('dark') || 
+                       (localStorage.getItem('pref-theme') === 'dark');
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: isDark ? 'dark' : 'neutral',
+            securityLevel: 'loose'
+        });
+        mermaid.run({
+            nodes: mermaidNodes
+        }).catch(function(e) {
+             
+        });
+    }
+});
+</script>
+
+
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var toplink = document.getElementById("top-link");
+    window.onscroll = function () {
+        const scrollThreshold = window.innerHeight;
+        if (document.body.scrollTop > scrollThreshold || document.documentElement.scrollTop > scrollThreshold) {
+            toplink.classList.remove("hidden");
+        } else {
+            toplink.classList.add("hidden");
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copiar';
+
+        function copyingDone() {
+            copybutton.innerHTML = '¡copiado!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copiar';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

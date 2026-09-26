@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es" dir="auto" data-theme="dark">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Orquestación &amp; CI/CD | Jonathan Luzuriaga | Systems &amp; Applied AI</title>
+<meta name="keywords" content="">
+<meta name="description" content="Automatización de flujos operativos inter-departamentales, pipelines en n8n, sincronización idempotente y control de tasa de refresco.">
+<meta name="author" content="Jonathan Luzuriaga">
+<link rel="canonical" href="http://localhost:1313/operaciones-cicd/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.89ca4972ab5e6aaa05e9a0dae0c4bb64b26585bc79e36f5cf33614eea0283abe.css" integrity="sha256-icpJcqteaqoF6aDa4MS7ZLJlhbx5429c8zYU7qAoOr4=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" type="application/rss+xml" href="http://localhost:1313/operaciones-cicd/index.xml" title="rss">
+<link rel="alternate" hreflang="es" href="http://localhost:1313/operaciones-cicd/">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/en/operaciones-cicd/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+</noscript>
+<script>
+    if (localStorage.getItem("pref-theme") === "light") {
+        document.querySelector("html").dataset.theme = 'light';
+    }
+
+</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+    onload="renderMathInElement(document.body, {
+        delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false},
+            {left: '\\(', right: '\\)', display: false},
+            {left: '\\[', right: '\\]', display: true}
+        ],
+        throwOnError: false
+    });">
+</script>
+<meta property="og:url" content="http://localhost:1313/operaciones-cicd/">
+  <meta property="og:site_name" content="Jonathan Luzuriaga | Systems & Applied AI">
+  <meta property="og:title" content="Orquestación & CI/CD">
+  <meta property="og:description" content="Automatización de flujos operativos inter-departamentales, pipelines en n8n, sincronización idempotente y control de tasa de refresco.">
+  <meta property="og:locale" content="es">
+  <meta property="og:type" content="website">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Orquestación & CI/CD">
+  <meta name="twitter:description" content="Automatización de flujos operativos inter-departamentales, pipelines en n8n, sincronización idempotente y control de tasa de refresco.">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Orquestación \u0026 CI/CD",
+      "item": "http://localhost:1313/operaciones-cicd/"
+    }
+  ]
+}
+</script>
+</head>
+<body class="list" id="top">
+    <header class="header">
+    <nav class="header-nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="Jonathan Luzuriaga | Systems &amp; Applied AI (Alt + H)">Jonathan Luzuriaga | Systems &amp; Applied AI</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" class="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button><span class="nav-sep">|</span>
+                    <ul class="lang-menu">
+                        <li>
+                            <a href="http://localhost:1313/en/" title="EN"
+                                aria-label="EN">EN</a>
+                        </li>
+                    </ul>
+            </div>
+        </div>
+        <ul id="menu" class="menu">
+            <li>
+                <a href="http://localhost:1313/" title="Inicio">
+                    <span>Inicio</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/sistemas-distribuidos/" title="Sistemas Distribuidos">
+                    <span>Sistemas Distribuidos</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/investigacion-ia/" title="Investigación &amp; IA">
+                    <span>Investigación &amp; IA</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/operaciones-cicd/" title="Orquestación &amp; CI/CD">
+                    <span class="active">Orquestación &amp; CI/CD</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/credenciales/" title="Credenciales Auditadas">
+                    <span>Credenciales Auditadas</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/docs/cv_jonathan_j_luzuriaga_es.pdf" title="CV (PDF)">
+                    <span>CV (PDF)</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main"> 
+<header class="page-header"><nav class="breadcrumbs" role="navigation" aria-label="Breadcrumb">
+            <a href="/">Inicio</a>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+        <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+</nav>
+  <h1>
+    Orquestación &amp; CI/CD
+  </h1>
+  <div class="post-description">
+    Automatización de flujos operativos inter-departamentales, pipelines en n8n, sincronización idempotente y control de tasa de refresco.
+  </div>
+</header>
+<div class="post-content md-content"><p>Ingeniería de pipelines y automatización de procesos para mitigar fricción humana, garantizar consistencia de estados entre sistemas y eliminar latencias operativas inter-equipos.</p>
+
+
+</div>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Manticore Labs — Orquestación de Procesos y Sincronización Idempotente
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p> Ver Perfil GitHub 1. Problema Raíz: Fricción Operativa y Desincronización de Estados En organizaciones con múltiples células de trabajo concurrentes, la fragmentación de la información engendra cuellos de botella severos:
+Latencia Operativa Humana: La transferencia manual de requisitos, estados de tareas y métricas de rendimiento introduce retrasos de horas o días entre dependencias funcionales. Inconsistencia de Estados: La actualización no atómica de múltiples herramientas genera estados partidos donde el equipo técnico opera sobre especificaciones desactualizadas. En Manticore Labs, diseñé y desplegué la arquitectura de automatización de procesos internos, estandarizando la gestión operativa e integrando las bases de datos de conocimiento mediante pipelines desacoplados.
+...</p>
+  </div>
+  <footer class="entry-footer">
+
+<span title='2026-09-25 00:00:00 +0000 UTC'>25 de septiembre de 2026</span>&nbsp;·&nbsp;<span>2 min</span>&nbsp;·&nbsp;<span>Jonathan Luzuriaga</span></footer>
+  <a class="entry-link" aria-label="post link to Manticore Labs — Orquestación de Procesos y Sincronización Idempotente" href="http://localhost:1313/operaciones-cicd/manticore-orquestacion-n8n/"></a>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="http://localhost:1313/">Jonathan Luzuriaga | Systems &amp; Applied AI</a></span> · 
+
+    
+    
+    <span>
+        Powered by
+        <a href="https://gohugo.io/?utm_source=papermod" rel="noopener" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" id="top-link" class="top-link hidden" aria-label="go to top" title="Go to Top (Alt + G)" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-up">
+        <polyline points="17 11 12 6 7 11"></polyline>
+        <polyline points="17 18 12 13 7 18"></polyline>
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var toplink = document.getElementById("top-link");
+    window.onscroll = function () {
+        const scrollThreshold = window.innerHeight;
+        if (document.body.scrollTop > scrollThreshold || document.documentElement.scrollTop > scrollThreshold) {
+            toplink.classList.remove("hidden");
+        } else {
+            toplink.classList.add("hidden");
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

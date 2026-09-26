@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto" data-theme="dark">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Systems Architecture &amp; Empirical Modeling | Jonathan Luzuriaga | Systems &amp; Applied AI</title>
+<meta name="keywords" content="">
+<meta name="description" content="In-depth technical breakdown of design decisions, failure mitigations, trade-offs, and distributed topologies.">
+<meta name="author" content="Jonathan Luzuriaga">
+<link rel="canonical" href="http://localhost:1313/en/arquitectura/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.eef372f5c345e0e577dd4953b39230b064a9a45edeee73e89a21ffa0b59c5d18.css" integrity="sha256-7vNy9cNF4OV33UlTs5IwsGSppF7e7nPomiH/oLWcXRg=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" type="application/rss+xml" href="http://localhost:1313/en/arquitectura/index.xml" title="rss">
+<link rel="alternate" hreflang="es" href="http://localhost:1313/arquitectura/">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/en/arquitectura/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+</noscript>
+<script>
+    if (localStorage.getItem("pref-theme") === "light") {
+        document.querySelector("html").dataset.theme = 'light';
+    }
+
+</script><meta property="og:url" content="http://localhost:1313/en/arquitectura/">
+  <meta property="og:site_name" content="Jonathan Luzuriaga | Systems & Applied AI">
+  <meta property="og:title" content="Systems Architecture & Empirical Modeling">
+  <meta property="og:description" content="In-depth technical breakdown of design decisions, failure mitigations, trade-offs, and distributed topologies.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="website">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Systems Architecture & Empirical Modeling">
+  <meta name="twitter:description" content="In-depth technical breakdown of design decisions, failure mitigations, trade-offs, and distributed topologies.">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Systems Architecture \u0026 Empirical Modeling",
+      "item": "http://localhost:1313/en/arquitectura/"
+    }
+  ]
+}
+</script>
+</head>
+<body class="list" id="top">
+    <header class="header">
+    <nav class="header-nav">
+        <div class="logo">
+            <a href="http://localhost:1313/en/" accesskey="h" title="Jonathan Luzuriaga | Systems &amp; Applied AI (Alt + H)">Jonathan Luzuriaga | Systems &amp; Applied AI</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" class="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button><span class="nav-sep">|</span>
+                    <ul class="lang-menu">
+                        <li>
+                            <a href="http://localhost:1313/" title="ES"
+                                aria-label="ES">ES</a>
+                        </li>
+                    </ul>
+            </div>
+        </div>
+        <ul id="menu" class="menu">
+            <li>
+                <a href="http://localhost:1313/en/arquitectura/juez-seguro/" title="Distributed Systems">
+                    <span>Distributed Systems</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/en/arquitectura/" title="Research &amp; AI">
+                    <span class="active">Research &amp; AI</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/en/arquitectura/manticore-orquestacion-n8n/" title="Orchestration &amp; CI/CD">
+                    <span>Orchestration &amp; CI/CD</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/en/credenciales/dse-eccouncil/" title="Audited Credentials">
+                    <span>Audited Credentials</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/en/docs/jonathan_j_luzuriaga_cv_en.pdf" title="Resume (PDF)">
+                    <span>Resume (PDF)</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main"> 
+<header class="page-header"><nav class="breadcrumbs" role="navigation" aria-label="Breadcrumb">
+            <a href="/en/">Home</a>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+        <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+</nav>
+  <h1>
+    Systems Architecture &amp; Empirical Modeling
+  </h1>
+  <div class="post-description">
+    In-depth technical breakdown of design decisions, failure mitigations, trade-offs, and distributed topologies.
+  </div>
+</header>
+<div class="post-content md-content"><p>Comprehensive engineering documentation covering systems design, mathematical modeling, and distributed orchestration. Each article defines the root problem, operational constraints, technology stack justification, and empirical results.</p>
+
+
+</div>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">El Juez Seguro — C4 Architecture, Zero-Trust &amp; Immutable Ledger
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p> View Code (GitHub) DevSecOps Certification (PDF) 1. Problem Space &amp; Threat Model In high-risk judicial jurisdictions, issuing rulings exposes magistrates to physical violence, extortion, and bribery. Legacy centralized judicial systems suffer from three critical vulnerabilities:
+Direct Issuer Traceability: Standard nominal digital signatures (e.g., X.509) irrevocably bind the signer’s identity to the ruling, visible to database administrators and network adversaries. Infrastructure Trust Dependency: A rogue database admin or attacker with privileged server access can modify or suppress judicial records retroactively without leaving a cryptographic audit trail. Metadata Leakage: Even with payload encryption, network traffic analysis (source IP, exact timestamps, packet bursts) permits statistical correlation of the magistrate’s physical identity. 2. Fundamental Architectural Decisions To solve these constraints without single points of compromise, El Juez Seguro is architected under strict Zero-Trust principles:
+...</p>
+  </div>
+  <footer class="entry-footer">
+
+<span title='2026-09-25 00:00:00 +0000 UTC'>September 25, 2026</span>&nbsp;·&nbsp;<span>3 min</span>&nbsp;·&nbsp;<span>Jonathan Luzuriaga</span></footer>
+  <a class="entry-link" aria-label="post link to El Juez Seguro — C4 Architecture, Zero-Trust & Immutable Ledger" href="http://localhost:1313/en/arquitectura/juez-seguro/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Deep Learning Optimizer Taxonomy (AHFE 2026)
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p> View Code (GitHub) Open Access Publication Presentation Certificate (PDF) 1. Research Context &amp; Publication Conference: 17th International Conference on Applied Human Factors and Ergonomics (AHFE 2026), Fenerbahçe University, Istanbul, Turkey. Paper Title: A Unified Taxonomy of Deep Learning Optimizers for Scalable and Efficient AI Systems. Publisher: AHFE Open Access, Vol. 203. DOI: 10.54941/ahfe1008074 Paper ID: 1410 2. The Core Bottleneck: Memory Wall in Large Model Training Distributed training of Large Language Models (LLMs) is fundamentally bounded by GPU High-Bandwidth Memory (HBM/VRAM) rather than raw tensor arithmetic capabilities.
+...</p>
+  </div>
+  <footer class="entry-footer">
+
+<span title='2026-09-25 00:00:00 +0000 UTC'>September 25, 2026</span>&nbsp;·&nbsp;<span>3 min</span>&nbsp;·&nbsp;<span>Jonathan Luzuriaga</span></footer>
+  <a class="entry-link" aria-label="post link to Deep Learning Optimizer Taxonomy (AHFE 2026)" href="http://localhost:1313/en/arquitectura/taxonomia-optimizadores-ahfe/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Continuous Bioacoustics Pipeline (BirdCLEF 2026)
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p> View Repositories (GitHub) 1. Domain Constraints &amp; Signal Challenges Autonomous species monitoring from continuous soundscapes presents severe signal-processing constraints:
+Unbalanced Signal-to-Noise Ratio (SNR): Target vocalizations are frequently masked by tropical rainfall, wind buffeting against field microphones, and strident insect noise. Polyphonic Soundscapes: Multiple species call simultaneously in overlapping frequency bands, requiring a strict multi-label classification formulation rather than mutual exclusion. Continuous Real-Time Ingestion: Models must process audio streams with low latency without exceeding compute and power limits. 2. End-to-End Acoustic Processing Pipeline flowchart LR Audio[&#34;Raw Audio (32 kHz)&#34;] --&gt; Slicer[&#34;5.0s Window Segmentation&#34;] Slicer --&gt; Filter[&#34;Bandpass Filter: 0.5 - 14 kHz&#34;] Filter --&gt; STFT[&#34;STFT &amp; Mel Filterbanks on GPU&#34;] STFT --&gt; Aug[&#34;Spectral Augmentation: SpecAugment &amp; Mixup&#34;] Aug --&gt; Backbone[&#34;Convolutional Backbone (Feature Extractor)&#34;] Backbone --&gt; MultiLabel[&#34;Multi-Label Head (Sigmoid &#43; Dynamic Margin)&#34;] MultiLabel --&gt; Out[&#34;Per-Species Probability Vector&#34;] 2.1. Feature Extraction &amp; Mel Filterbanks Raw audio signals (WAV/OGG) are standardized to a single-channel 32,000 Hz sampling rate. Signals are cut into 5-second deterministic windows (160,000 samples). Short-Time Fourier Transform (STFT) with a 1024-point Hanning window and 512-point hop size transforms audio into 128 Mel-frequency bins on GPU. 2.2. Spectral Data Augmentation To harden models against environmental shifts:
+...</p>
+  </div>
+  <footer class="entry-footer">
+
+<span title='2026-09-25 00:00:00 +0000 UTC'>September 25, 2026</span>&nbsp;·&nbsp;<span>2 min</span>&nbsp;·&nbsp;<span>Jonathan Luzuriaga</span></footer>
+  <a class="entry-link" aria-label="post link to Continuous Bioacoustics Pipeline (BirdCLEF 2026)" href="http://localhost:1313/en/arquitectura/birdclef-acustica/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Lynx Cores (Vixora Tech) — Edge-to-Cloud Phytosanitary Architecture
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p> Lynx Cores Org (GitHub) Mobile App (GitHub) 1. Real-World Constraints: Zero In-Field Connectivity Agricultural cacao plantations across the coastal and Amazon regions of Ecuador operate under intermittent or non-existent cellular coverage. Architectures that rely on synchronous cloud API calls fail at the farmer’s point of work.
+Lynx Cores / Vixora Tech was engineered from first principles as an Offline-First system, awarded 2nd place at Hult Prize EPN and advancing to the national finals based on technical feasibility and architecture rigor.
+...</p>
+  </div>
+  <footer class="entry-footer">
+
+<span title='2026-09-25 00:00:00 +0000 UTC'>September 25, 2026</span>&nbsp;·&nbsp;<span>2 min</span>&nbsp;·&nbsp;<span>Jonathan Luzuriaga</span></footer>
+  <a class="entry-link" aria-label="post link to Lynx Cores (Vixora Tech) — Edge-to-Cloud Phytosanitary Architecture" href="http://localhost:1313/en/arquitectura/lynx-cores-cloud-edge/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Manticore Labs — Workflow Orchestration &amp; Idempotent Sync
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p> View GitHub Profile 1. Root Problem: Operational Latency and State Desynchronization In organizations managing concurrent engineering and operational squads, information fragmentation causes systemic friction:
+Manual Operational Latency: Handing over technical requirements and progress updates introduces day-long delays between functional dependencies. Split-Brain States: Non-atomic updates across disjoint tools cause teams to operate against stale specifications. At Manticore Labs, I designed and deployed internal automated pipelines, standardizing operational execution and connecting relational knowledge bases through decoupled event flows.
+...</p>
+  </div>
+  <footer class="entry-footer">
+
+<span title='2026-09-25 00:00:00 +0000 UTC'>September 25, 2026</span>&nbsp;·&nbsp;<span>2 min</span>&nbsp;·&nbsp;<span>Jonathan Luzuriaga</span></footer>
+  <a class="entry-link" aria-label="post link to Manticore Labs — Workflow Orchestration & Idempotent Sync" href="http://localhost:1313/en/arquitectura/manticore-orquestacion-n8n/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Intelligent Irrigation — Out-of-Core Processing with Dask &amp; Hybrid Modeling
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p> View Code (GitHub) 1. Challenge: National-Scale Satellite Analytics Forecasting soil water stress across hydrological basins requires ingesting massive spatiotemporal time series (NDVI, NDRE vegetation indices, land surface temperature, and precipitation rasters). Dataset sizes routinely exceed available server RAM, leading to Out-Of-Memory (OOM) crashes.
+2. Compute Strategy: Out-of-Core Processing with Dask Rather than provisioning oversized compute clusters for exploratory feature engineering, we utilized Dask:
+Lazy Directed Acyclic Graphs (DAGs): Matrix operations across partitioned arrays are scheduled lazily, materializing in memory only when explicitly evaluated by chunk. Streaming Memory Management: Each data chunk is read from disk, transformed, and released before loading subsequent blocks, bounding RAM utilization strictly below predefined hardware caps. flowchart TD Data[&#34;Spatiotemporal Satellite Rasters&#34;] --&gt; Chunks[&#34;Chunk Partitioning via Dask&#34;] Chunks --&gt; DAG[&#34;DAG Task Graph Construction&#34;] DAG --&gt; StreamExec[&#34;Out-of-Core Streaming Execution&#34;] StreamExec --&gt; Features[&#34;Temporal &amp; Spatial Feature Engineering&#34;] Features --&gt; ModelXGB[&#34;Gradient Boosting: XGBoost&#34;] Features --&gt; ModelLSTM[&#34;Recurrent Neural Network: LSTM&#34;] ModelXGB --&gt; Blend[&#34;Weighted Stacking Ensemble&#34;] ModelLSTM --&gt; Blend Blend --&gt; Output[&#34;Water Requirement Forecast&#34;] 3. Hybrid Predictive Architecture To model both instantaneous atmospheric non-linearities and historical hydrological lag:
+...</p>
+  </div>
+  <footer class="entry-footer">
+
+<span title='2026-09-25 00:00:00 +0000 UTC'>September 25, 2026</span>&nbsp;·&nbsp;<span>2 min</span>&nbsp;·&nbsp;<span>Jonathan Luzuriaga</span></footer>
+  <a class="entry-link" aria-label="post link to Intelligent Irrigation — Out-of-Core Processing with Dask & Hybrid Modeling" href="http://localhost:1313/en/arquitectura/riego-inteligente/"></a>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="http://localhost:1313/en/">Jonathan Luzuriaga | Systems &amp; Applied AI</a></span> · 
+
+    
+    
+    <span>
+        Powered by
+        <a href="https://gohugo.io/?utm_source=papermod" rel="noopener" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" id="top-link" class="top-link hidden" aria-label="go to top" title="Go to Top (Alt + G)" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-up">
+        <polyline points="17 11 12 6 7 11"></polyline>
+        <polyline points="17 18 12 13 7 18"></polyline>
+    </svg>
+</a><script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const mermaidNodes = document.querySelectorAll('.mermaid');
+    if (mermaidNodes.length > 0) {
+        const isDark = document.body.classList.contains('dark') || 
+                       (localStorage.getItem('pref-theme') === 'dark');
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: isDark ? 'dark' : 'neutral',
+            securityLevel: 'loose'
+        });
+        mermaid.run({
+            nodes: mermaidNodes
+        }).catch(function(e) {
+             
+        });
+    }
+});
+</script>
+
+
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var toplink = document.getElementById("top-link");
+    window.onscroll = function () {
+        const scrollThreshold = window.innerHeight;
+        if (document.body.scrollTop > scrollThreshold || document.documentElement.scrollTop > scrollThreshold) {
+            toplink.classList.remove("hidden");
+        } else {
+            toplink.classList.add("hidden");
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

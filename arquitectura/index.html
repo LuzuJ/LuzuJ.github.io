@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="es" dir="auto" data-theme="dark">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Arquitectura de Sistemas &amp; Modelado Empírico | Jonathan Luzuriaga | Systems &amp; Applied AI</title>
+<meta name="keywords" content="">
+<meta name="description" content="Documentación técnica profunda de decisiones de diseño, mitigación de fallos, trade-offs y topologías distribuidas.">
+<meta name="author" content="Jonathan Luzuriaga">
+<link rel="canonical" href="http://localhost:1313/arquitectura/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.eef372f5c345e0e577dd4953b39230b064a9a45edeee73e89a21ffa0b59c5d18.css" integrity="sha256-7vNy9cNF4OV33UlTs5IwsGSppF7e7nPomiH/oLWcXRg=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" type="application/rss+xml" href="http://localhost:1313/arquitectura/index.xml" title="rss">
+<link rel="alternate" hreflang="es" href="http://localhost:1313/arquitectura/">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/en/arquitectura/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+</noscript>
+<script>
+    if (localStorage.getItem("pref-theme") === "light") {
+        document.querySelector("html").dataset.theme = 'light';
+    }
+
+</script><meta property="og:url" content="http://localhost:1313/arquitectura/">
+  <meta property="og:site_name" content="Jonathan Luzuriaga | Systems & Applied AI">
+  <meta property="og:title" content="Arquitectura de Sistemas & Modelado Empírico">
+  <meta property="og:description" content="Documentación técnica profunda de decisiones de diseño, mitigación de fallos, trade-offs y topologías distribuidas.">
+  <meta property="og:locale" content="es">
+  <meta property="og:type" content="website">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Arquitectura de Sistemas & Modelado Empírico">
+  <meta name="twitter:description" content="Documentación técnica profunda de decisiones de diseño, mitigación de fallos, trade-offs y topologías distribuidas.">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Arquitectura de Sistemas \u0026 Modelado Empírico",
+      "item": "http://localhost:1313/arquitectura/"
+    }
+  ]
+}
+</script>
+</head>
+<body class="list" id="top">
+    <header class="header">
+    <nav class="header-nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="Jonathan Luzuriaga | Systems &amp; Applied AI (Alt + H)">Jonathan Luzuriaga | Systems &amp; Applied AI</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" class="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button><span class="nav-sep">|</span>
+                    <ul class="lang-menu">
+                        <li>
+                            <a href="http://localhost:1313/en/" title="EN"
+                                aria-label="EN">EN</a>
+                        </li>
+                    </ul>
+            </div>
+        </div>
+        <ul id="menu" class="menu">
+            <li>
+                <a href="http://localhost:1313/arquitectura/juez-seguro/" title="Sistemas Distribuidos">
+                    <span>Sistemas Distribuidos</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/arquitectura/" title="Investigación &amp; IA">
+                    <span class="active">Investigación &amp; IA</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/arquitectura/manticore-orquestacion-n8n/" title="Orquestación &amp; CI/CD">
+                    <span>Orquestación &amp; CI/CD</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/credenciales/dse-eccouncil/" title="Credenciales Auditadas">
+                    <span>Credenciales Auditadas</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/docs/cv_jonathan_j_luzuriaga_es.pdf" title="CV (PDF)">
+                    <span>CV (PDF)</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main"> 
+<header class="page-header"><nav class="breadcrumbs" role="navigation" aria-label="Breadcrumb">
+            <a href="/">Inicio</a>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+        <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+</nav>
+  <h1>
+    Arquitectura de Sistemas &amp; Modelado Empírico
+  </h1>
+  <div class="post-description">
+    Documentación técnica profunda de decisiones de diseño, mitigación de fallos, trade-offs y topologías distribuidas.
+  </div>
+</header>
+<div class="post-content md-content"><p>Documentación exhaustiva de diseño de sistemas, modelado matemático y orquestación distribuida. Cada entrega expone el problema raíz, el espacio de restricciones operativas, la justificación del stack tecnológico y los resultados empíricos obtenidos.</p>
+
+
+</div>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">El Juez Seguro — Arquitectura C4, Zero-Trust y Ledger Inmutable
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p> Ver Código (GitHub) Certificación DevSecOps 1. Planteamiento del Problema y Espacio de Amenazas En jurisdicciones de alto riesgo procesal, la emisión de fallos judiciales expone a los magistrados a coacciones físicas, represalias y sobornos. Los sistemas judiciales centralizados tradicionales sufren de tres vulnerabilidades estructurales críticas:
+Trazabilidad directa del emisor: La firma digital estándar (ej. X.509 o clave pública nominal) vincula inequívocamente al firmante con la sentencia ante cualquier operador de base de datos o atacante con acceso a la red. Dependencia de confianza en la infraestructura: Un administrador de base de datos o un atacante con acceso privilegiado al servidor puede alterar o suprimir fallos con posterioridad a su emisión sin dejar rastro inmutable. Fuga de metadatos: Incluso si el contenido está cifrado, el análisis de tráfico (dirección IP de origen, timestamps exactos, patrones de ráfagas) permite correlacionar la identidad del juez emisor. 2. Decisiones Arquitectónicas Fundamentales Para resolver estos desafíos sin introducir puntos únicos de compromiso, la arquitectura de El Juez Seguro se fundamenta en principios estrictos de Zero-Trust:
+...</p>
+  </div>
+  <footer class="entry-footer">
+
+<span title='2026-09-25 00:00:00 +0000 UTC'>25 de septiembre de 2026</span>&nbsp;·&nbsp;<span>4 min</span>&nbsp;·&nbsp;<span>Jonathan Luzuriaga</span></footer>
+  <a class="entry-link" aria-label="post link to El Juez Seguro — Arquitectura C4, Zero-Trust y Ledger Inmutable" href="http://localhost:1313/arquitectura/juez-seguro/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Taxonomía de Optimizadores de Deep Learning (AHFE 2026)
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p> Ver Código (GitHub) Publicación (Open Access) Certificado de Presentación (PDF) 1. Contexto de Investigación y Publicación Conferencia: 17th International Conference on Applied Human Factors and Ergonomics (AHFE 2026), Fenerbahçe University, Estambul, Turquía. Artículo: A Unified Taxonomy of Deep Learning Optimizers for Scalable and Efficient AI Systems. Publicación Oficial: AHFE Open Access, Vol. 203. DOI: 10.54941/ahfe1008074 Paper ID: 1410 2. El Cuello de Botella: El Muro de Memoria en el Entrenamiento de IA El entrenamiento distribuido de modelos de lenguaje (LLMs) y modelos de visión a gran escala está acotado fundamentalmente por el ancho de banda y la capacidad de la memoria de la GPU (VRAM) más que por la capacidad pura de FLOPS de cómputo.
+...</p>
+  </div>
+  <footer class="entry-footer">
+
+<span title='2026-09-25 00:00:00 +0000 UTC'>25 de septiembre de 2026</span>&nbsp;·&nbsp;<span>3 min</span>&nbsp;·&nbsp;<span>Jonathan Luzuriaga</span></footer>
+  <a class="entry-link" aria-label="post link to Taxonomía de Optimizadores de Deep Learning (AHFE 2026)" href="http://localhost:1313/arquitectura/taxonomia-optimizadores-ahfe/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Pipeline Multietiqueta de Bioacústica (BirdCLEF 2026)
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p> Ver Repositorios Kaggle (GitHub) 1. Desafío Físico y Restricciones del Dominio La identificación automatizada de especies de aves a partir de grabaciones de audio en campo continuo presenta desafíos singulares de procesamiento de señales:
+Relación Señal/Ruido (SNR) desbalanceada: Las vocalizaciones de interés suelen estar ocultas bajo lluvia torrencial, viento contra los micrófonos de campo, insectos estridentes y corrientes fluviales. Solapamiento Polifónico: Múltiples especies emiten vocalizaciones concurrentes en la misma banda de frecuencia, exigiendo una clasificación multietiqueta estricta (no multiclase mutuamente excluyente). Restricción de Latencia e Inferencia Continua: El modelo debe procesar horas ininterrumpidas de audio sin degradar el throughput computacional. 2. Pipeline de Procesamiento de Señales de Extremo a Extremo flowchart LR Audio[&#34;Audio Crudo 32 kHz&#34;] --&gt; Slicer[&#34;Segmentación en Ventanas de 5s&#34;] Slicer --&gt; Filter[&#34;Filtrado Pasa-Banda: 0.5 - 14 kHz&#34;] Filter --&gt; STFT[&#34;Transformada STFT y Banco Mel en GPU&#34;] STFT --&gt; Aug[&#34;Aumento Espectral: SpecAugment y Mixup&#34;] Aug --&gt; Backbone[&#34;Backbone Convolucional (Extracción de Patrones)&#34;] Backbone --&gt; MultiLabel[&#34;Cabezal Multietiqueta (Sigmoide &#43; Umbral)&#34;] MultiLabel --&gt; Out[&#34;Vector de Probabilidades por Especie&#34;] 2.1. Ingesta y Espectrogramas Mel El audio crudo en formato WAV/OGG se remuestrea a una frecuencia fija de 32,000 Hz. Se generan segmentos de longitud temporal fija de 5.0 segundos (160,000 muestras). Se aplica una Transformada Rápida de Fourier de Tiempo Reducido (STFT) con ventana Hanning de 1024 puntos y salto de 512 puntos, proyectando las energías hacia una escala Mel con 128 bancos de filtros normalizados en rango decibélico (dB). 2.2. Aumento de Datos Espectral Para robustecer la red frente a variaciones de grabación y solapamiento:
+...</p>
+  </div>
+  <footer class="entry-footer">
+
+<span title='2026-09-25 00:00:00 +0000 UTC'>25 de septiembre de 2026</span>&nbsp;·&nbsp;<span>2 min</span>&nbsp;·&nbsp;<span>Jonathan Luzuriaga</span></footer>
+  <a class="entry-link" aria-label="post link to Pipeline Multietiqueta de Bioacústica (BirdCLEF 2026)" href="http://localhost:1313/arquitectura/birdclef-acustica/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Lynx Cores (Vixora Tech) — Arquitectura Fitosanitaria Edge-to-Cloud
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p> Organización Lynx Cores (GitHub) App Móvil (GitHub) 1. Fricción del Mundo Real: Conectividad Cero en Campo Las plantaciones agrícolas de cacao en la región litoral y amazónica ecuatoriana operan en zonas con cobertura celular nula o intermitente. Cualquier arquitectura que dependa de llamadas API sincrónicas a la nube para clasificar imágenes falla estrepitosamente en el punto de uso del agricultor.
+Lynx Cores / Vixora Tech fue diseñado desde primeros principios como un sistema Offline-First, galardonado con el 2do lugar en Hult Prize EPN y clasificado a la fase nacional por su rigor técnico y viabilidad arquitectónica.
+...</p>
+  </div>
+  <footer class="entry-footer">
+
+<span title='2026-09-25 00:00:00 +0000 UTC'>25 de septiembre de 2026</span>&nbsp;·&nbsp;<span>2 min</span>&nbsp;·&nbsp;<span>Jonathan Luzuriaga</span></footer>
+  <a class="entry-link" aria-label="post link to Lynx Cores (Vixora Tech) — Arquitectura Fitosanitaria Edge-to-Cloud" href="http://localhost:1313/arquitectura/lynx-cores-cloud-edge/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Manticore Labs — Orquestación de Procesos y Sincronización Idempotente
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p> Ver Perfil GitHub 1. Problema Raíz: Fricción Operativa y Desincronización de Estados En organizaciones con múltiples células de trabajo concurrentes, la fragmentación de la información engendra cuellos de botella severos:
+Latencia Operativa Humana: La transferencia manual de requisitos, estados de tareas y métricas de rendimiento introduce retrasos de horas o días entre dependencias funcionales. Inconsistencia de Estados: La actualización no atómica de múltiples herramientas genera estados partidos donde el equipo técnico opera sobre especificaciones desactualizadas. En Manticore Labs, diseñé y desplegué la arquitectura de automatización de procesos internos, estandarizando la gestión operativa e integrando las bases de datos de conocimiento mediante pipelines desacoplados.
+...</p>
+  </div>
+  <footer class="entry-footer">
+
+<span title='2026-09-25 00:00:00 +0000 UTC'>25 de septiembre de 2026</span>&nbsp;·&nbsp;<span>2 min</span>&nbsp;·&nbsp;<span>Jonathan Luzuriaga</span></footer>
+  <a class="entry-link" aria-label="post link to Manticore Labs — Orquestación de Procesos y Sincronización Idempotente" href="http://localhost:1313/arquitectura/manticore-orquestacion-n8n/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Riego Inteligente — Cómputo Out-of-Core con Dask y Modelado Híbrido
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p> Ver Código (GitHub) 1. El Reto: Análisis Geoespacial Satelital a Escala Nacional El cálculo del estrés hídrico para la optimización de recursos en cuencas hidrográficas requiere la ingestión masiva de series temporales multiespectrales (índices NDVI, NDRE, temperatura superficial y precipitaciones satelitales). Los volúmenes de datos exceden con frecuencia la memoria RAM disponible en estaciones de trabajo y servidores estándar, provocando fallos por falta de memoria (Out-Of-Memory / OOM).
+2. Estrategia de Cómputo: Procesamiento Fuera de Memoria con Dask En lugar de recurrir a clústeres Spark sobredimensionados para etapas de exploración e ingeniería de características, implementamos Dask:
+...</p>
+  </div>
+  <footer class="entry-footer">
+
+<span title='2026-09-25 00:00:00 +0000 UTC'>25 de septiembre de 2026</span>&nbsp;·&nbsp;<span>2 min</span>&nbsp;·&nbsp;<span>Jonathan Luzuriaga</span></footer>
+  <a class="entry-link" aria-label="post link to Riego Inteligente — Cómputo Out-of-Core con Dask y Modelado Híbrido" href="http://localhost:1313/arquitectura/riego-inteligente/"></a>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="http://localhost:1313/">Jonathan Luzuriaga | Systems &amp; Applied AI</a></span> · 
+
+    
+    
+    <span>
+        Powered by
+        <a href="https://gohugo.io/?utm_source=papermod" rel="noopener" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" id="top-link" class="top-link hidden" aria-label="go to top" title="Go to Top (Alt + G)" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-up">
+        <polyline points="17 11 12 6 7 11"></polyline>
+        <polyline points="17 18 12 13 7 18"></polyline>
+    </svg>
+</a><script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const mermaidNodes = document.querySelectorAll('.mermaid');
+    if (mermaidNodes.length > 0) {
+        const isDark = document.body.classList.contains('dark') || 
+                       (localStorage.getItem('pref-theme') === 'dark');
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: isDark ? 'dark' : 'neutral',
+            securityLevel: 'loose'
+        });
+        mermaid.run({
+            nodes: mermaidNodes
+        }).catch(function(e) {
+             
+        });
+    }
+});
+</script>
+
+
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var toplink = document.getElementById("top-link");
+    window.onscroll = function () {
+        const scrollThreshold = window.innerHeight;
+        if (document.body.scrollTop > scrollThreshold || document.documentElement.scrollTop > scrollThreshold) {
+            toplink.classList.remove("hidden");
+        } else {
+            toplink.classList.add("hidden");
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>
