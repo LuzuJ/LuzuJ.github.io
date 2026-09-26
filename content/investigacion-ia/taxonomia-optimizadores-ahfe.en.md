@@ -58,5 +58,9 @@ $$\theta_t \leftarrow \theta_{t-1} - \eta_t \cdot \text{clip}\left( \frac{m_t}{\
 ## 4. Symbolic Optimizer Search (Experimentos-LLMs)
 
 To empirically validate mathematical variants, we built an evolutionary search pipeline in Python:
-* **AST Computation Graph Formulation:** Generates symbolic expressions combining arithmetic operators, temporal momentum filters, and norm normalizations.
-* **Isolated Benchmark Runner:** Evaluates candidates across convex and non-convex test surfaces to measure convergence rate, wall-clock time, and numerical stability.
+* **Evolutionary Symbolic Search:** A generator proposes algebraic AST mutations over gradients and momentum, while an evaluator measures empirical convergence rates and numerical stability.
+
+<div style="text-align: center; margin: 1.5rem 0;">
+  <img src="/images/results_vs_Adam.png" alt="Convergence Curve: Discovered Optimizers vs Adam" style="max-width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--border);" />
+  <p style="font-size: 0.85rem; color: var(--secondary); margin-top: 0.5rem;"><i>Figure 1: Empirical convergence trace benchmark comparing discovered symbolic candidates against the Adam baseline.</i></p>
+</div>

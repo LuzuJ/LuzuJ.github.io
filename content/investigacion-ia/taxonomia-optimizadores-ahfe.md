@@ -58,5 +58,9 @@ $$\theta_t \leftarrow \theta_{t-1} - \eta_t \cdot \text{clip}\left( \frac{m_t}{\
 ## 4. Descubrimiento Algorítmico Simbólico (Experimentos-LLMs)
 
 Como soporte empírico de la investigación, implementamos un entorno de búsqueda evolutiva en Python (`Experimentos-LLMs`):
-* **Generador de Grafos de Computación:** Un árbol sintáctico abstracto (AST) formula algebraicamente nuevas combinaciones de operaciones aritméticas elementales sobre gradientes históricos y estados de momentum.
-* **Evaluador Aislado:** Cada candidato es evaluado automáticamente sobre problemas de juguete convexos y no convexos para medir tasa de convergencia, divergencia numérica y coste computacional.
+* **Búsqueda Simbólica Evolutiva:** Un generador formula expresiones algebraicas sobre gradientes y momentos históricos, mientras un evaluador calcula la tasa de convergencia y estabilidad numérica.
+
+<div style="text-align: center; margin: 1.5rem 0;">
+  <img src="/images/results_vs_Adam.png" alt="Curva de Convergencia: Optimizadores Descubiertos vs Adam" style="max-width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--border);" />
+  <p style="font-size: 0.85rem; color: var(--secondary); margin-top: 0.5rem;"><i>Figura 1: Traza de convergencia empírica evaluando candidatos simbólicos frente a la línea base de Adam.</i></p>
+</div>
