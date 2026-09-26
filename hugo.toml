@@ -1,0 +1,130 @@
+baseURL = 'https://luzuj.github.io/'
+theme = 'PaperMod'
+defaultContentLanguage = 'es'
+defaultContentLanguageInSubdir = false
+
+enableRobotsTXT = true
+buildDrafts = false
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+    [markup.goldmark.parser]
+      [markup.goldmark.parser.attribute]
+        block = true
+        title = true
+  [markup.highlight]
+    codeFences = true
+    guessSyntax = true
+    lineNos = false
+    style = 'monokai'
+
+[params]
+  env = 'production'
+  author = 'Jonathan Luzuriaga'
+  mainSections = ["sistemas-distribuidos", "investigacion-ia", "operaciones-cicd"]
+  
+  defaultTheme = 'dark'
+  disableThemeToggle = false
+  disableLangToggle = false
+  displayFullLangName = true
+
+  ShowReadingTime = true
+  ShowShareButtons = false
+  ShowPostNavLinks = true
+  ShowBreadCrumbs = true
+  ShowCodeCopyButtons = true
+  ShowToc = true
+  TocOpen = false
+  disableSpecial1stPost = true
+
+  [params.assets]
+    disableHLJS = true
+
+  [[params.socialIcons]]
+    name = "github"
+    url = "https://github.com/LuzuJ"
+  [[params.socialIcons]]
+    name = "linkedin"
+    url = "https://www.linkedin.com/in/jonathan-luzuriaga/"
+  [[params.socialIcons]]
+    name = "email"
+    url = "mailto:jonaluzu1@gmail.com"
+
+[languages]
+  [languages.es]
+    label = "ES"
+    locale = "es"
+    weight = 1
+    title = "Jonathan Luzuriaga | Systems & Applied AI"
+    [languages.es.params]
+      description = "Arquitecturas distribuidas, tolerancia a fallos y optimización algorítmica bajo principios Zero-Trust."
+    [[languages.es.menu.main]]
+      identifier = "inicio"
+      name = "Inicio"
+      url = "/"
+      weight = 10
+    [[languages.es.menu.main]]
+      identifier = "distribuidos"
+      name = "Sistemas Distribuidos"
+      url = "/sistemas-distribuidos/"
+      weight = 20
+    [[languages.es.menu.main]]
+      identifier = "investigacion"
+      name = "Investigación & IA"
+      url = "/investigacion-ia/"
+      weight = 30
+    [[languages.es.menu.main]]
+      identifier = "operaciones"
+      name = "Orquestación & CI/CD"
+      url = "/operaciones-cicd/"
+      weight = 40
+    [[languages.es.menu.main]]
+      identifier = "credenciales"
+      name = "Credenciales Auditadas"
+      url = "/credenciales/"
+      weight = 50
+    [[languages.es.menu.main]]
+      identifier = "cv"
+      name = "CV (PDF)"
+      url = "/docs/CV_Jonathan_J_Luzuriaga_ES.pdf"
+      weight = 60
+
+  [languages.en]
+    label = "EN"
+    locale = "en"
+    weight = 2
+    title = "Jonathan Luzuriaga | Systems & Applied AI"
+    [languages.en.params]
+      description = "Distributed systems, fault tolerance, and algorithmic optimization under Zero-Trust principles."
+    [[languages.en.menu.main]]
+      identifier = "home"
+      name = "Home"
+      url = "/en/"
+      weight = 10
+    [[languages.en.menu.main]]
+      identifier = "distribuidos"
+      name = "Distributed Systems"
+      url = "/en/sistemas-distribuidos/"
+      weight = 20
+    [[languages.en.menu.main]]
+      identifier = "investigacion"
+      name = "Research & AI"
+      url = "/en/investigacion-ia/"
+      weight = 30
+    [[languages.en.menu.main]]
+      identifier = "operaciones"
+      name = "Orchestration & CI/CD"
+      url = "/en/operaciones-cicd/"
+      weight = 40
+    [[languages.en.menu.main]]
+      identifier = "credenciales"
+      name = "Audited Credentials"
+      url = "/en/credenciales/"
+      weight = 50
+    [[languages.en.menu.main]]
+      identifier = "cv"
+      name = "Resume (PDF)"
+      url = "/docs/Jonathan_J_Luzuriaga_CV_EN.pdf"
+      weight = 60
