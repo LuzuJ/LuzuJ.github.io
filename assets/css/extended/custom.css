@@ -133,3 +133,18 @@
     font-size: 0.82rem;
     margin: 0.2rem 0.2rem 0.2rem 0;
 }
+
+/* Header Navbar: Align theme toggle and language selector to the right */
+.header-nav .logo {
+    flex: 1 1 100%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-nav .logo-switches {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+}
