@@ -20,14 +20,22 @@ La identificación automatizada de especies de aves a partir de grabaciones de a
 ## 2. Pipeline de Procesamiento de Señales de Extremo a Extremo
 
 ```mermaid
-flowchart LR
-    Audio["Audio Crudo 32 kHz"] --> Slicer["Segmentación en Ventanas de 5s"]
-    Slicer --> Filter["Filtrado Pasa-Banda: 0.5 - 14 kHz"]
-    Filter --> STFT["Transformada STFT y Banco Mel en GPU"]
-    STFT --> Aug["Aumento Espectral: SpecAugment y Mixup"]
-    Aug --> Backbone["Backbone Convolucional (Extracción de Patrones)"]
-    Backbone --> MultiLabel["Cabezal Multietiqueta (Sigmoide + Umbral)"]
-    MultiLabel --> Out["Vector de Probabilidades por Especie"]
+flowchart TD
+    subgraph S1 ["1. Ingesta y Acondicionamiento de Señal"]
+        Audio["Audio Crudo (32 kHz)"] --> Slicer["Segmentación en Ventanas de 5.0s"]
+        Slicer --> Filter["Filtrado Pasa-Banda (0.5 – 14 kHz)"]
+    end
+
+    subgraph S2 ["2. Transformación Espectral"]
+        Filter --> STFT["Transformada STFT & Banco Mel en GPU"]
+        STFT --> Aug["Aumento Espectral (SpecAugment & Mixup)"]
+    end
+
+    subgraph S3 ["3. Inferencia y Clasificación Multietiqueta"]
+        Aug --> Backbone["Backbone Convolucional (Extracción de Patrones)"]
+        Backbone --> MultiLabel["Cabezal Multietiqueta (Sigmoide + Umbral Adaptativo)"]
+        MultiLabel --> Out["Vector de Probabilidades por Especie"]
+    end
 ```
 
 ### 2.1. Ingesta y Espectrogramas Mel

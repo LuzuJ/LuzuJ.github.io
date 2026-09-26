@@ -93,13 +93,13 @@ graph TB
 ### Nivel 3 — Diagrama de Componentes del API Gateway (C4-L3)
 
 ```mermaid
-graph LR
-    Req[Petición Entrante] --> MW_Scrub[Middleware de Saneamiento<br/><i>Elimina IP / User-Agent</i>]
-    MW_Scrub --> MW_Replay[Control Anti-Replay<br/><i>Verificación de Nonce & Timestamp</i>]
-    MW_Replay --> MW_Auth[Autenticador de Sesión<br/><i>Validación HMAC & Roles</i>]
-    MW_Auth --> Router[Enrutador de Dominio]
-    Router --> NATS_Pub[Publicador JetStream]
-    NATS_Pub --> NATS_Bus[Bus NATS]
+flowchart TD
+    Req["Petición Entrante (HTTP/mTLS)"] --> MW_Scrub["Middleware de Saneamiento (Elimina IP / User-Agent)"]
+    MW_Scrub --> MW_Replay["Control Anti-Replay (Verificación de Nonce & Timestamp)"]
+    MW_Replay --> MW_Auth["Autenticador de Sesión (Validación HMAC & Roles)"]
+    MW_Auth --> Router["Enrutador de Dominio"]
+    Router --> NATS_Pub["Publicador JetStream"]
+    NATS_Pub --> NATS_Bus["Bus NATS"]
 ```
 
 ---

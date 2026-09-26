@@ -20,14 +20,22 @@ Autonomous species monitoring from continuous soundscapes presents severe signal
 ## 2. End-to-End Acoustic Processing Pipeline
 
 ```mermaid
-flowchart LR
-    Audio["Raw Audio (32 kHz)"] --> Slicer["5.0s Window Segmentation"]
-    Slicer --> Filter["Bandpass Filter: 0.5 - 14 kHz"]
-    Filter --> STFT["STFT & Mel Filterbanks on GPU"]
-    STFT --> Aug["Spectral Augmentation: SpecAugment & Mixup"]
-    Aug --> Backbone["Convolutional Backbone (Feature Extractor)"]
-    Backbone --> MultiLabel["Multi-Label Head (Sigmoid + Dynamic Margin)"]
-    MultiLabel --> Out["Per-Species Probability Vector"]
+flowchart TD
+    subgraph S1 ["1. Signal Ingestion & Conditioning"]
+        Audio["Raw Audio (32 kHz)"] --> Slicer["5.0s Deterministic Windowing"]
+        Slicer --> Filter["Bandpass Filter (0.5 – 14 kHz)"]
+    end
+
+    subgraph S2 ["2. Spectral Transformation"]
+        Filter --> STFT["GPU-Accelerated STFT & Mel Filterbanks"]
+        STFT --> Aug["Spectral Augmentation (SpecAugment & Mixup)"]
+    end
+
+    subgraph S3 ["3. Multi-Label Inference & Classification"]
+        Aug --> Backbone["Convolutional Backbone (Feature Extractor)"]
+        Backbone --> MultiLabel["Multi-Label Head (Sigmoid + Adaptive Threshold)"]
+        MultiLabel --> Out["Per-Species Probability Vector"]
+    end
 ```
 
 ### 2.1. Feature Extraction & Mel Filterbanks

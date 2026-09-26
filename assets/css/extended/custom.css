@@ -107,6 +107,13 @@
     overflow-x: auto;
 }
 
+.mermaid svg {
+    max-width: 100%;
+    height: auto;
+    display: inline-block;
+    min-width: min(100%, 380px);
+}
+
 /* Architecture Callouts */
 .arch-card {
     border-left: 3px solid var(--accent-blue);

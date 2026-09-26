@@ -73,8 +73,8 @@ flowchart TB
 ### Level 3 — API Gateway Component Diagram (C4-L3)
 
 ```mermaid
-flowchart LR
-    Req["Inbound Request"] --> MW_Scrub["Metadata Scrubbing Middleware (Strips IP / User-Agent)"]
+flowchart TD
+    Req["Inbound Request (HTTP/mTLS)"] --> MW_Scrub["Metadata Scrubbing Middleware (Strips IP / User-Agent)"]
     MW_Scrub --> MW_Replay["Anti-Replay Control (Nonce & Timestamp Check)"]
     MW_Replay --> MW_Auth["Session Authenticator (HMAC & Role Validation)"]
     MW_Auth --> Router["Domain Router"]
